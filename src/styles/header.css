@@ -1,0 +1,69 @@
+.header {
+  height: var(--header-height);
+  min-height: var(--header-height);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+  background: var(--bg-panel);
+  border-bottom: 1px solid #eee;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-empresa {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.header-subtitle {
+  font-size: 13px;
+  color: var(--text-muted);
+  padding-top: 4px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+.header-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.header-user-icon {
+  font-size: 20px;
+  color: var(--accent);
+}
+
+.header-user {
+  font-size: 14px;
+  color: var(--text-dark);
+  font-weight: 500;
+}
+
+.header-datetime {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.header-date {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.header-time {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-dark);
+  font-variant-numeric: tabular-nums;
+}

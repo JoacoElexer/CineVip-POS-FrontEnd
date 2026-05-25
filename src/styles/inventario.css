@@ -1,0 +1,100 @@
+.inventario {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.inventario-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.inventario-header h2 {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.inventario-search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  background: var(--bg-panel);
+  border-radius: var(--border-radius-sm);
+  color: var(--text-muted);
+  box-shadow: var(--shadow);
+}
+
+.inventario-search input {
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--text-dark);
+  font-size: 14px;
+  width: 200px;
+}
+
+.inventario-search input::placeholder {
+  color: var(--text-muted);
+}
+
+.inventario-table-wrapper {
+  background: var(--bg-panel);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+.inventario-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.inventario-table th {
+  text-align: left;
+  padding: 16px 20px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  background: #f9f9f9;
+  border-bottom: 1px solid #eee;
+}
+
+.inventario-table td {
+  padding: 14px 20px;
+  font-size: 14px;
+  color: var(--text-dark);
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.inventario-table tr:last-child td {
+  border-bottom: none;
+}
+
+.inv-prod-name {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+}
+
+.inv-prod-icon {
+  color: var(--accent);
+  font-size: 18px;
+}
+
+.inv-stock {
+  padding: 4px 12px;
+  background: rgba(46, 204, 113, 0.1);
+  color: #2ecc71;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.inv-price {
+  font-weight: 600;
+  color: var(--accent);
+}

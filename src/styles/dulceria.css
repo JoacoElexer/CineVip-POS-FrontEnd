@@ -1,0 +1,359 @@
+.dulceria {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  height: 100%;
+}
+
+.category-tabs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.category-tab {
+  padding: 10px 24px;
+  border-radius: 24px;
+  background: rgba(0, 0, 0, 0.04);
+  color: var(--text-muted);
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+}
+
+.category-tab:hover {
+  background: rgba(0, 0, 0, 0.08);
+  color: var(--text-dark);
+}
+
+.category-tab.active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+.dulceria-content {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.product-card {
+  background: var(--bg-panel);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: var(--shadow);
+}
+
+.product-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.product-image {
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.product-emoji {
+  font-size: 72px;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+}
+
+.product-info {
+  padding: 16px 20px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.product-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-dark);
+  line-height: 1.3;
+}
+
+.product-price {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.product-add-btn {
+  margin: 0 20px 20px;
+  padding: 12px;
+  border-radius: var(--border-radius-sm);
+  background: var(--accent);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background 0.2s;
+}
+
+.product-add-btn:hover {
+  background: var(--accent-hover);
+}
+
+.product-add-btn svg {
+  font-size: 16px;
+}
+
+.dulceria-fab {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: var(--accent);
+  color: #fff;
+  border-radius: 50px;
+  padding: 14px 24px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: var(--shadow-lg);
+  font-size: 15px;
+  font-weight: 600;
+  transition: transform 0.2s;
+  z-index: 50;
+}
+
+.dulceria-fab:hover {
+  transform: scale(1.05);
+}
+
+.fab-icon {
+  font-size: 22px;
+}
+
+.fab-badge {
+  background: #fff;
+  color: var(--accent);
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.fab-total {
+  font-size: 16px;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 98;
+}
+
+.sale-summary-modal {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 400px;
+  max-width: 90vw;
+  height: 100vh;
+  background: var(--bg-panel);
+  z-index: 99;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow-lg);
+  animation: slideInRight 0.3s ease;
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+.summary-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px;
+  border-bottom: 1px solid #eee;
+}
+
+.summary-header h2 {
+  font-size: 20px;
+  color: var(--text-dark);
+}
+
+.summary-close-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f0f0f0;
+  color: var(--text-dark);
+  font-size: 20px;
+  transition: background 0.2s;
+}
+
+.summary-close-btn:hover {
+  background: #e0e0e0;
+}
+
+.summary-items {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.summary-empty {
+  text-align: center;
+  color: var(--text-muted);
+  padding: 40px 0;
+  font-size: 14px;
+}
+
+.summary-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  background: #f5f5f5;
+  border-radius: var(--border-radius-sm);
+}
+
+.summary-item-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.summary-item-emoji {
+  font-size: 28px;
+}
+
+.summary-item-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.summary-item-price {
+  font-size: 13px;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.summary-item-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.summary-item-controls button {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #e8e8e8;
+  color: var(--text-dark);
+  font-size: 14px;
+  transition: background 0.2s;
+}
+
+.summary-item-controls button:hover {
+  background: #d0d0d0;
+}
+
+.summary-item-qty {
+  width: 28px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text-dark);
+}
+
+.summary-item-remove {
+  margin-left: 4px;
+  background: #ffe0e0 !important;
+  color: #e74c3c !important;
+}
+
+.summary-totals {
+  padding: 16px 24px;
+  border-top: 1px solid #eee;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  color: var(--text-dark);
+}
+
+.summary-row-total {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--accent);
+  border-top: 1px solid #eee;
+  padding-top: 8px;
+  margin-top: 4px;
+}
+
+.summary-actions {
+  padding: 16px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.summary-btn {
+  padding: 14px;
+  border-radius: var(--border-radius-sm);
+  font-size: 15px;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.summary-btn-secondary {
+  background: #f0f0f0;
+  color: var(--text-dark);
+}
+
+.summary-btn-secondary:hover {
+  background: #e0e0e0;
+}
+
+.summary-btn-primary {
+  background: var(--accent);
+  color: #fff;
+}
+
+.summary-btn-primary:hover {
+  background: var(--accent-hover);
+}
