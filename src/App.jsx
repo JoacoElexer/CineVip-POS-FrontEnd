@@ -4,6 +4,8 @@ import Dulceria from './pages/Dulceria.jsx';
 import Boletera from './pages/Boletera.jsx';
 import Inventario from './pages/Inventario.jsx';
 import ReporteCierre from './pages/ReporteCierre.jsx';
+import Admin from './pages/Admin.jsx';
+import Cuenta from './pages/Cuenta.jsx';
 
 export default function App() {
   return (
@@ -15,6 +17,8 @@ export default function App() {
           <Route path="/boletera" element={<Boletera />} />
           <Route path="/inventario" element={<Inventario />} />
           <Route path="/reportes" element={<ReporteCierre />} />
+          <Route path="/admin" element={<Admin />} />
+          <Route path="/cuenta" element={<Cuenta />} />
         </Route>
       </Routes>
     </BrowserRouter>

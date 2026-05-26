@@ -1,24 +1,39 @@
-import { useState, useMemo } from 'react';
-import { pelicula } from '../data/funciones.js';
+import { useState, useMemo, useCallback } from 'react';
 
 export function useBoletos() {
   const [selectedSeats, setSelectedSeats] = useState([]);
+  const [funcionActual, setFuncionActual] = useState(null);
+  const [peliculaActual, setPeliculaActual] = useState(null);
+  const [salaActual, setSalaActual] = useState(null);
+  const [asientosOcupados, setAsientosOcupados] = useState([]);
 
-  const toggleSeat = (seatId, isOcupado) => {
+  const toggleSeat = useCallback((seatId, isOcupado) => {
     if (isOcupado) return;
     setSelectedSeats(prev =>
       prev.includes(seatId)
         ? prev.filter(s => s !== seatId)
         : [...prev, seatId]
     );
-  };
+  }, []);
 
-  const clearSeats = () => setSelectedSeats([]);
+  const clearSeats = useCallback(() => setSelectedSeats([]), []);
+
+  const seleccionarFuncion = useCallback((funcion, pelicula, sala, asientos) => {
+    setFuncionActual(funcion);
+    setPeliculaActual(pelicula);
+    setSalaActual(sala);
+    setAsientosOcupados(asientos || []);
+    setSelectedSeats([]);
+  }, []);
 
   const total = useMemo(() =>
-    selectedSeats.length * pelicula.precioBoleto,
+    selectedSeats.length * 5.50,
     [selectedSeats.length]
   );
 
-  return { selectedSeats, toggleSeat, clearSeats, total, movieInfo: pelicula };
+  return {
+    selectedSeats, toggleSeat, clearSeats, total,
+    funcionActual, peliculaActual, salaActual, asientosOcupados,
+    seleccionarFuncion, setAsientosOcupados
+  };
 }

@@ -306,3 +306,45 @@
   color: #aaa;
   cursor: not-allowed;
 }
+
+.boletera-selectors {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  background: var(--bg-panel);
+  padding: 16px 20px;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+}
+
+.selector-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 150px;
+}
+
+.selector-group label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.selector-group select,
+.selector-group input {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: var(--border-radius-sm);
+  font-size: 13px;
+  background: #fff;
+  color: var(--text-dark);
+  outline: none;
+}
+
+.selector-group select:focus,
+.selector-group input:focus {
+  border-color: var(--accent);
+}

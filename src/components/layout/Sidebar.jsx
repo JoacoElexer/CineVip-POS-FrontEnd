@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { HiOutlineTicket, HiOutlineShoppingBag, HiOutlineArchive, HiOutlineChartBar, HiOutlineUser } from 'react-icons/hi';
+import { HiOutlineTicket, HiOutlineShoppingBag, HiOutlineArchive, HiOutlineChartBar, HiOutlineUser, HiOutlineCog } from 'react-icons/hi';
 import '../../styles/sidebar.css';
 
 const navItems = [
@@ -7,6 +7,7 @@ const navItems = [
   { to: '/boletera', icon: HiOutlineTicket, label: 'Boletera' },
   { to: '/inventario', icon: HiOutlineArchive, label: 'Inventario' },
   { to: '/reportes', icon: HiOutlineChartBar, label: 'Reportes' },
+  { to: '/admin', icon: HiOutlineCog, label: 'Admin' },
   { to: '/cuenta', icon: HiOutlineUser, label: 'Cuenta' },
 ];
 
