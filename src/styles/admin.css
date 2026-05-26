@@ -1,0 +1,237 @@
+.admin {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.admin-header h2 {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.admin-tabs {
+  display: flex;
+  gap: 4px;
+  background: var(--bg-panel);
+  border-radius: var(--border-radius);
+  padding: 4px;
+  box-shadow: var(--shadow);
+}
+
+.admin-tab {
+  flex: 1;
+  padding: 10px 16px;
+  border-radius: var(--border-radius-sm);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-dark);
+  transition: all 0.15s;
+}
+
+.admin-tab:hover {
+  background: #f0f0f0;
+}
+
+.admin-tab.active {
+  background: var(--accent);
+  color: #fff;
+}
+
+.admin-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.admin-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.admin-panel-count {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.admin-empty {
+  text-align: center;
+  padding: 40px;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.admin-table {
+  width: 100%;
+  background: var(--bg-panel);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  border-collapse: collapse;
+}
+
+.admin-table th {
+  text-align: left;
+  padding: 14px 20px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  background: #f9f9f9;
+  border-bottom: 1px solid #eee;
+}
+
+.admin-table td {
+  padding: 12px 20px;
+  font-size: 14px;
+  color: var(--text-dark);
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.admin-table tr:last-child td {
+  border-bottom: none;
+}
+
+.admin-cell-name {
+  font-weight: 600;
+}
+
+.admin-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.admin-actions button {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f0f0f0;
+  color: var(--text-dark);
+  font-size: 14px;
+  transition: background 0.2s;
+}
+
+.admin-actions button:hover {
+  background: #e0e0e0;
+}
+
+.admin-delete {
+  background: #ffe0e0 !important;
+  color: #e74c3c !important;
+}
+
+.admin-descuento {
+  padding: 4px 12px;
+  background: rgba(46, 204, 113, 0.1);
+  color: #2ecc71;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.admin-inactivo {
+  background: rgba(231, 76, 60, 0.1) !important;
+  color: #e74c3c !important;
+}
+
+.admin-filter-bar {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.admin-filter-bar select {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: var(--border-radius-sm);
+  font-size: 13px;
+  background: #fff;
+  color: var(--text-dark);
+  outline: none;
+}
+
+.admin-filter-bar select:focus {
+  border-color: var(--accent);
+}
+
+.admin-delete-btn {
+  padding: 8px 14px;
+  background: #ffe0e0;
+  color: #e74c3c;
+  border-radius: var(--border-radius-sm);
+  font-size: 12px;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.admin-delete-btn:hover {
+  background: #ffc0c0;
+}
+
+.admin-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.admin-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.admin-form-group label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.admin-form-group input,
+.admin-form-group select {
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: var(--border-radius-sm);
+  font-size: 14px;
+  outline: none;
+  color: var(--text-dark);
+}
+
+.admin-form-group input:focus,
+.admin-form-group select:focus {
+  border-color: var(--accent);
+}
+
+.admin-form-row {
+  display: flex;
+  gap: 12px;
+}
+
+.admin-form-row .admin-form-group {
+  flex: 1;
+}
+
+.admin-form-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding-top: 8px;
+}
+
+.admin-submit {
+  padding: 10px 20px;
+  background: var(--accent);
+  color: #fff;
+  border-radius: var(--border-radius-sm);
+  font-size: 14px;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.admin-submit:hover {
+  background: var(--accent-hover);
+}

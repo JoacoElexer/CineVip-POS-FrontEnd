@@ -1,55 +1,169 @@
-import { HiOutlineSearch, HiOutlineArchive } from 'react-icons/hi';
+import { useState } from 'react';
+import { HiOutlineSearch, HiOutlinePencil, HiOutlineTrash, HiOutlinePlus } from 'react-icons/hi';
+import { useProductos } from '../hooks/useProductos.js';
+import { useCategorias, useInventario } from '../hooks/useCategorias.js';
+import Modal from '../components/common/Modal.jsx';
+import ConfirmDialog from '../components/common/ConfirmDialog.jsx';
+import EmptyState from '../components/common/EmptyState.jsx';
 import '../styles/inventario.css';
 
-const productosMock = [
-  { id: 1, nombre: 'Palomitas Pequeñas', categoria: 'Dulcería', stock: 150, precio: '$55.00' },
-  { id: 2, nombre: 'Palomitas Grandes', categoria: 'Dulcería', stock: 120, precio: '$80.00' },
-  { id: 3, nombre: 'Refresco Cola', categoria: 'Comida', stock: 200, precio: '$50.00' },
-  { id: 4, nombre: 'Hot Dog', categoria: 'Comida', stock: 80, precio: '$65.00' },
-  { id: 5, nombre: 'Helado', categoria: 'Postres', stock: 60, precio: '$58.00' },
-  { id: 6, nombre: 'Cerveza', categoria: 'Coctelería', stock: 100, precio: '$75.00' },
-  { id: 7, nombre: 'Nachos', categoria: 'Comida', stock: 90, precio: '$70.00' },
-  { id: 8, nombre: 'Combo 1 (Palomitas + 2 Refrescos)', categoria: 'Combos', stock: 50, precio: '$120.00' },
-  { id: 9, nombre: 'Churros', categoria: 'Postres', stock: 70, precio: '$52.00' },
-  { id: 10, nombre: 'Piña Colada', categoria: 'Coctelería', stock: 40, precio: '$95.00' },
-];
-
 export default function Inventario() {
+  const { productos, agregar, actualizar, eliminar } = useProductos();
+  const { categorias } = useCategorias();
+  const { inventario, upsert: upsertInv } = useInventario();
+
+  const [search, setSearch] = useState('');
+  const [showModal, setShowModal] = useState(false);
+  const [editing, setEditing] = useState(null);
+  const [deleteId, setDeleteId] = useState(null);
+  const [form, setForm] = useState({ nombre: '', id_categoria: '', precio: '', stock: '', emoji: '📦' });
+
+  const filtered = productos.filter(p =>
+    p.nombre?.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const openCreate = () => {
+    setEditing(null);
+    setForm({ nombre: '', id_categoria: categorias[0]?.id_categoria || '', precio: '', stock: '', emoji: '📦' });
+    setShowModal(true);
+  };
+
+  const openEdit = (producto) => {
+    setEditing(producto);
+    const inv = inventario.find(i => i.id_producto === producto.id_producto);
+    setForm({
+      nombre: producto.nombre || '',
+      id_categoria: producto.id_categoria || '',
+      precio: producto.precio || '',
+      stock: inv?.stock_actual || '',
+      emoji: producto.emoji || '📦',
+    });
+    setShowModal(true);
+  };
+
+  const handleSave = () => {
+    if (!form.nombre || !form.precio) return;
+    const data = {
+      nombre: form.nombre,
+      id_categoria: Number(form.id_categoria),
+      precio: Number(form.precio),
+      emoji: form.emoji,
+    };
+
+    if (editing) {
+      actualizar(editing.id_producto, data);
+      if (form.stock !== '') upsertInv({ id_producto: editing.id_producto, stock_actual: Number(form.stock) });
+    } else {
+      const nuevo = agregar(data);
+      if (form.stock !== '') upsertInv({ id_producto: nuevo.id_producto, stock_actual: Number(form.stock) });
+    }
+    setShowModal(false);
+  };
+
+  const handleDelete = () => {
+    if (deleteId) eliminar(deleteId);
+    setDeleteId(null);
+  };
+
+  const getCategoriaNombre = (id) => categorias.find(c => c.id_categoria === id)?.nombre || 'N/A';
+  const getStock = (id) => inventario.find(i => i.id_producto === id)?.stock_actual ?? '—';
+
   return (
     <div className="inventario">
       <div className="inventario-header">
         <h2>Inventario</h2>
-        <div className="inventario-search">
-          <HiOutlineSearch />
-          <input type="text" placeholder="Buscar producto..." />
+        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+          <div className="inventario-search">
+            <HiOutlineSearch />
+            <input type="text" placeholder="Buscar producto..." value={search} onChange={e => setSearch(e.target.value)} />
+          </div>
+          <button className="inv-add-btn" onClick={openCreate}>
+            <HiOutlinePlus /> Agregar
+          </button>
         </div>
       </div>
 
-      <div className="inventario-table-wrapper">
-        <table className="inventario-table">
-          <thead>
-            <tr>
-              <th>Producto</th>
-              <th>Categoría</th>
-              <th>Stock</th>
-              <th>Precio</th>
-            </tr>
-          </thead>
-          <tbody>
-            {productosMock.map(p => (
-              <tr key={p.id}>
-                <td className="inv-prod-name">
-                  <HiOutlineArchive className="inv-prod-icon" />
-                  {p.nombre}
-                </td>
-                <td>{p.categoria}</td>
-                <td><span className="inv-stock">{p.stock}</span></td>
-                <td className="inv-price">{p.precio}</td>
+      {productos.length === 0 ? (
+        <EmptyState icon="📦" message="No hay productos registrados" submessage="Agrega tu primer producto usando el botón 'Agregar'" />
+      ) : (
+        <div className="inventario-table-wrapper">
+          <table className="inventario-table">
+            <thead>
+              <tr>
+                <th>Producto</th>
+                <th>Categoría</th>
+                <th>Stock</th>
+                <th>Precio</th>
+                <th style={{ width: '80px' }}>Acciones</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {filtered.map(p => (
+                <tr key={p.id_producto}>
+                  <td className="inv-prod-name">
+                    <span style={{ fontSize: '20px', marginRight: '8px' }}>{p.emoji || '📦'}</span>
+                    {p.nombre}
+                  </td>
+                  <td>{getCategoriaNombre(p.id_categoria)}</td>
+                  <td><span className="inv-stock">{getStock(p.id_producto)}</span></td>
+                  <td className="inv-price">${(p.precio || 0).toFixed(2)}</td>
+                  <td>
+                    <div className="inv-actions">
+                      <button className="inv-action-btn" onClick={() => openEdit(p)}><HiOutlinePencil /></button>
+                      <button className="inv-action-btn inv-action-delete" onClick={() => setDeleteId(p.id_producto)}><HiOutlineTrash /></button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      <Modal isOpen={showModal} onClose={() => setShowModal(false)} title={editing ? 'Editar Producto' : 'Nuevo Producto'}>
+        <div className="inv-form">
+          <div className="inv-form-group">
+            <label>Nombre del producto</label>
+            <input type="text" value={form.nombre} onChange={e => setForm({ ...form, nombre: e.target.value })} placeholder="Ej: Palomitas Grandes" />
+          </div>
+          <div className="inv-form-group">
+            <label>Categoría</label>
+            <select value={form.id_categoria} onChange={e => setForm({ ...form, id_categoria: e.target.value })}>
+              <option value="">Seleccionar categoría</option>
+              {categorias.map(c => (
+                <option key={c.id_categoria} value={c.id_categoria}>{c.nombre}</option>
+              ))}
+            </select>
+          </div>
+          <div style={{ display: 'flex', gap: '12px' }}>
+            <div className="inv-form-group" style={{ flex: 1 }}>
+              <label>Precio ($)</label>
+              <input type="number" step="0.01" min="0" value={form.precio} onChange={e => setForm({ ...form, precio: e.target.value })} placeholder="0.00" />
+            </div>
+            <div className="inv-form-group" style={{ flex: 1 }}>
+              <label>Stock</label>
+              <input type="number" min="0" value={form.stock} onChange={e => setForm({ ...form, stock: e.target.value })} placeholder="0" />
+            </div>
+          </div>
+          <div className="inv-form-group">
+            <label>Emoji</label>
+            <input type="text" value={form.emoji} onChange={e => setForm({ ...form, emoji: e.target.value })} placeholder="📦" maxLength="5" />
+          </div>
+          <div className="inv-form-footer">
+            <button className="summary-btn summary-btn-secondary" onClick={() => setShowModal(false)}>Cancelar</button>
+            <button className="inv-form-submit" onClick={handleSave}>{editing ? 'Actualizar' : 'Crear Producto'}</button>
+          </div>
+        </div>
+      </Modal>
+
+      <ConfirmDialog
+        isOpen={!!deleteId}
+        message="¿Estás seguro de eliminar este producto?"
+        onConfirm={handleDelete}
+        onCancel={() => setDeleteId(null)}
+        confirmText="Eliminar"
+        danger
+      />
     </div>
   );
 }

@@ -1,37 +1,41 @@
 import { HiOutlineX } from 'react-icons/hi';
+import EmptyState from '../common/EmptyState.jsx';
 
-export default function CartPanel({ movieInfo, selectedSeats, total }) {
+export default function CartPanel({ pelicula, sala, funcion, selectedSeats, total, onBuy }) {
+  if (!pelicula || !funcion) {
+    return (
+      <aside className="cart-panel">
+        <h2 className="cart-panel-title">Tu carrito</h2>
+        <EmptyState icon="🎫" message="Selecciona una función" submessage="Elige película, sala, fecha y función para continuar" />
+      </aside>
+    );
+  }
+
   return (
     <aside className="cart-panel">
       <h2 className="cart-panel-title">Tu carrito</h2>
 
       <div className="cart-movie-info">
-        <div className="cart-movie-img">{movieInfo.imagen}</div>
+        <div className="cart-movie-img" style={{ background: 'linear-gradient(135deg, var(--accent), #9b59b6)' }}>
+          {pelicula.emoji || '🎬'}
+        </div>
         <div className="cart-movie-details">
-          <h3 className="cart-movie-name">{movieInfo.nombre}</h3>
+          <h3 className="cart-movie-name">{pelicula.nombre}</h3>
           <div className="cart-movie-meta">
-            <span className="cart-badge">{movieInfo.clasificacion}</span>
-            <span>{movieInfo.duracion}</span>
+            <span className="cart-badge">{pelicula.clasificacion || 'N/A'}</span>
+            <span>{pelicula.duracion || ''}</span>
           </div>
         </div>
       </div>
 
       <div className="cart-session-info">
         <div className="cart-session-row">
-          <span>Cine:</span>
-          <strong>{movieInfo.cine}</strong>
-        </div>
-        <div className="cart-session-row">
-          <span>Fecha:</span>
-          <strong>{movieInfo.fecha}</strong>
-        </div>
-        <div className="cart-session-row">
-          <span>Hora:</span>
-          <strong>{movieInfo.hora}</strong>
-        </div>
-        <div className="cart-session-row">
           <span>Sala:</span>
-          <strong>{movieInfo.sala}</strong>
+          <strong>{sala?.nombre || `Sala ${funcion.id_sala}`}</strong>
+        </div>
+        <div className="cart-session-row">
+          <span>Horario:</span>
+          <strong>{funcion.horario ? new Date(funcion.horario).toLocaleString('es-MX') : 'N/A'}</strong>
         </div>
       </div>
 
@@ -40,32 +44,34 @@ export default function CartPanel({ movieInfo, selectedSeats, total }) {
         {selectedSeats.length === 0 ? (
           <p className="cart-seats-empty">No hay asientos seleccionados</p>
         ) : (
-          <div className="cart-seats-list">
-            {selectedSeats.map(seat => (
-              <span key={seat} className="cart-seat-tag">
-                {seat} <HiOutlineX />
-              </span>
-            ))}
-          </div>
+          <>
+            <div className="cart-seats-list">
+              {selectedSeats.map(seat => (
+                <span key={seat} className="cart-seat-tag">
+                  {seat} <HiOutlineX />
+                </span>
+              ))}
+            </div>
+            <div className="cart-total-section">
+              <div className="cart-total-row">
+                <span>Boletos ({selectedSeats.length})</span>
+                <span>${total.toFixed(2)}</span>
+              </div>
+              <div className="cart-grand-total">
+                <span>Total</span>
+                <span>${total.toFixed(2)}</span>
+              </div>
+            </div>
+          </>
         )}
-      </div>
-
-      <div className="cart-total-section">
-        <div className="cart-total-row">
-          <span>Boletos ({selectedSeats.length})</span>
-          <span>${total.toFixed(2)}</span>
-        </div>
-        <div className="cart-grand-total">
-          <span>Total</span>
-          <span>${total.toFixed(2)}</span>
-        </div>
       </div>
 
       <button
         className="cart-checkout-btn"
         disabled={selectedSeats.length === 0}
+        onClick={onBuy}
       >
-        Continuar
+        Comprar boletos
       </button>
     </aside>
   );

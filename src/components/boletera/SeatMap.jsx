@@ -1,10 +1,16 @@
-import { filas, asientosPorFila, asientosSillaRuedas } from '../../data/funciones.js';
+export default function SeatMap({ selectedSeats, toggleSeat, occupiedSeats, sala, asientos = [], filas = [], asientosPorFila = 0 }) {
+  if (asientos.length === 0) {
+    return (
+      <div className="seat-map-container">
+        <p style={{ color: 'var(--text-muted)', padding: '40px' }}>No hay asientos configurados para esta sala</p>
+      </div>
+    );
+  }
 
-export default function SeatMap({ selectedSeats, toggleSeat, occupiedSeats, sala }) {
   return (
     <div className="seat-map-container">
       <div className="seat-screen">
-        <span>Pantalla Sala {sala}</span>
+        <span>Pantalla - {sala}</span>
         <div className="seat-screen-bar" />
       </div>
 
@@ -17,8 +23,9 @@ export default function SeatMap({ selectedSeats, toggleSeat, occupiedSeats, sala
                 const num = i + 1;
                 const seatId = `${fila}${num}`;
                 const isOcupado = occupiedSeats.has(seatId);
-                const isSillaRuedas = asientosSillaRuedas.has(seatId);
                 const isSelected = selectedSeats.includes(seatId);
+                const asientoData = asientos.find(a => a.fila === fila && a.numero === num);
+                const isSillaRuedas = asientoData?.tipo === 'silla_ruedas';
 
                 let clase = 'seat';
                 if (isOcupado) clase += ' seat-occupied';
