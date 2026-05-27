@@ -4,13 +4,39 @@ import * as ventasService from '../services/ventas.js';
 const CACHE_KEY = 'pos_cine_ventas_cache';
 
 function normalize(v) {
-  return { ...v, id_venta: v.id_venta || v._id, id_usuario: v.id_empleado || v.id_usuario };
+  return {
+    ...v,
+    id_venta: v.id_venta ?? v.id ?? v._id,
+    id_usuario: v.id_usuario ?? v.id_empleado ?? v.empleado_id,
+    fecha: v.fecha ?? v.fecha_transaccion,
+    total: Number(v.total ?? v.total_pagado) || 0,
+    subtotal: Number(v.subtotal) || 0,
+    propina: Number(v.propina) || 0,
+  };
+}
+
+function getUsuarioId() {
+  try {
+    const data = localStorage.getItem('pos_cine_usuarios');
+    if (data) { const u = JSON.parse(data); return u.id_usuario || null; }
+  } catch { /* ignore */ }
+  return null;
 }
 
 function toBackend(v) {
   const data = { ...v };
-  data.id_empleado = data.id_usuario;
+  data.empleado_id = data.empleado_id ?? data.id_usuario ?? getUsuarioId();
+  data.total_pagado = data.total_pagado ?? data.total;
+  data.metodo_pago = data.metodo_pago || 'Efectivo';
+  data.subtotal = data.subtotal ?? data.total;
   delete data.id_usuario;
+  delete data.total;
+  delete data.items;
+  delete data.asientos;
+  delete data.tipo;
+  delete data.pelicula;
+  delete data.id_funcion;
+  delete data.propina_porcentaje;
   return data;
 }
 
