@@ -73,7 +73,16 @@ export function useVentas() {
     const nueva = { ...venta, fecha: venta.fecha || new Date().toISOString() };
     try {
       const res = await ventasService.createVenta(toBackend(nueva));
-      const registrada = { ...nueva, ...normalize(res.data) };
+      const registrada = {
+        ...normalize(res.data),
+        tipo: venta.tipo,
+        items: venta.items,
+        asientos: venta.asientos,
+        id_funcion: venta.id_funcion,
+        pelicula: venta.pelicula,
+        subtotal: venta.subtotal,
+        propina: venta.propina,
+      };
       setVentas(prev => { const u = [...prev, registrada]; saveCache(u); return u; });
       return registrada;
     } catch {
