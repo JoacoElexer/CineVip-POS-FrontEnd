@@ -26,8 +26,10 @@ export default function App() {
               <Route path="/reportes" element={<ReporteCierre />} />
               <Route path="/cuenta" element={<Cuenta />} />
             </Route>
-            <Route element={<ProtectedRoute allowedRoles={['Administrador']} />}>
+            <Route element={<ProtectedRoute allowedRoles={['Administrador', 'Almacenista']} />}>
               <Route path="/inventario" element={<Inventario />} />
+            </Route>
+            <Route element={<ProtectedRoute allowedRoles={['Administrador']} />}>
               <Route path="/admin" element={<Admin />} />
             </Route>
           </Route>

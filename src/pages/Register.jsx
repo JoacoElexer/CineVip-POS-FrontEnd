@@ -84,6 +84,7 @@ export default function Register() {
             <label htmlFor="reg-rol">Rol</label>
             <select id="reg-rol" value={form.rol} onChange={e => setForm({ ...form, rol: e.target.value })} className="login-select">
               <option value="Cajero">Cajero</option>
+              <option value="Almacenista">Almacenista</option>
               <option value="Administrador">Administrador</option>
             </select>
           </div>

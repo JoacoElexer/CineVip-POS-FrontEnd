@@ -6,17 +6,16 @@ import '../../styles/sidebar.css';
 const allNavItems = [
   { to: '/dulceria', icon: HiOutlineShoppingBag, label: 'Dulcería' },
   { to: '/boletera', icon: HiOutlineTicket, label: 'Boletera' },
-  { to: '/inventario', icon: HiOutlineArchive, label: 'Inventario', adminOnly: true },
+  { to: '/inventario', icon: HiOutlineArchive, label: 'Inventario', roles: ['Administrador', 'Almacenista'] },
   { to: '/reportes', icon: HiOutlineChartBar, label: 'Reportes' },
-  { to: '/admin', icon: HiOutlineCog, label: 'Admin', adminOnly: true },
+  { to: '/admin', icon: HiOutlineCog, label: 'Admin', roles: ['Administrador'] },
   { to: '/cuenta', icon: HiOutlineUser, label: 'Cuenta' },
 ];
 
 export default function Sidebar() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
-  const isAdmin = user?.rol === 'Administrador';
-  const navItems = allNavItems.filter(item => !item.adminOnly || isAdmin);
+  const navItems = allNavItems.filter(item => !item.roles || item.roles.includes(user?.rol));
 
   function handleLogout() {
     logout();

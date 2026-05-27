@@ -633,10 +633,11 @@ function UsuariosPanel() {
             </div>
             <div className="admin-form-group" style={{ flex: 1 }}>
               <label>Rol</label>
-              <select value={form.rol} onChange={e => setForm({ ...form, rol: e.target.value })}>
-                <option value="Administrador">Administrador</option>
-                <option value="Cajero">Cajero</option>
-              </select>
+                <select value={form.rol} onChange={e => setForm({ ...form, rol: e.target.value })}>
+                  <option value="Administrador">Administrador</option>
+                  <option value="Cajero">Cajero</option>
+                  <option value="Almacenista">Almacenista</option>
+                </select>
             </div>
           </div>
           <div className="admin-form-row">
