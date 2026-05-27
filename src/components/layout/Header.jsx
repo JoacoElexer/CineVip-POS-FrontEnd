@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import { HiOutlineUser } from 'react-icons/hi';
+import { useAuth } from '../../context/AuthContext.jsx';
 import '../../styles/header.css';
 
 export default function Header() {
+  const { user } = useAuth();
   const [hora, setHora] = useState(new Date());
 
   useEffect(() => {
@@ -26,7 +28,7 @@ export default function Header() {
       <div className="header-right">
         <div className="header-info">
           <HiOutlineUser className="header-user-icon" />
-          <span className="header-user">Operador: Andrés López</span>
+          <span className="header-user">Operador: {user?.nombre || '—'}</span>
         </div>
         <div className="header-datetime">
           <span className="header-date">{fechaFormateada}</span>
