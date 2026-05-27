@@ -22,7 +22,7 @@ export default function ReporteCierre() {
   useEffect(() => {
     let ignore = false;
     reportesService.getReportesGuardados()
-      .then(res => { if (ignore) return; const data = Array.isArray(res.data) ? res.data : []; setReportesGuardados(data.map(r => ({ ...r, id: r._id || r.id }))); })
+      .then(res => { if (ignore) return; const data = Array.isArray(res.data) ? res.data : []; setReportesGuardados(data.map(r => ({ total: 0, efectivo: 0, tarjeta: 0, transacciones: 0, ...r, id: r._id || r.id }))); })
       .catch(() => {});
     return () => { ignore = true; };
   }, []);
@@ -159,10 +159,10 @@ export default function ReporteCierre() {
               {reportesGuardados.map(r => (
                 <tr key={r.id}>
                   <td>{r.fecha}</td>
-                  <td>${r.total.toFixed(2)}</td>
-                  <td>{r.transacciones}</td>
-                  <td>${r.efectivo.toFixed(2)}</td>
-                  <td>${r.tarjeta.toFixed(2)}</td>
+                  <td>${(r.total || 0).toFixed(2)}</td>
+                  <td>{r.transacciones ?? 0}</td>
+                  <td>${(r.efectivo || 0).toFixed(2)}</td>
+                  <td>${(r.tarjeta || 0).toFixed(2)}</td>
                   <td>
                     <button className="inv-action-btn inv-action-delete" onClick={() => setDeleteId(r.id)}>
                       <HiOutlineTrash />
