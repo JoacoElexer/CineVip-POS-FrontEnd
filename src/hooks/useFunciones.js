@@ -13,14 +13,16 @@ function normalizeFuncion(f) {
     precio: Number(f.precio ?? f.precio_boleto) || 0,
     pelicula_id: f.pelicula_id ?? f.pelicula_id_mongo,
     pelicula_id_mongo: f.pelicula_id ?? f.pelicula_id_mongo,
-    horario: f.horario || (f.fecha && f.hora ? `${f.fecha}T${f.hora}`.trim() : ''),
+    horario: f.horario || (f.fecha && f.hora ? `${f.fecha.split('T')[0]}T${f.hora}`.trim() : ''),
     horarioDisplay: (() => {
-      const h = f.horario || (f.fecha && f.hora ? `${f.fecha}T${f.hora}`.trim() : '');
-      if (!h) return '';
-      const d = new Date(h);
-      if (isNaN(d.getTime())) return h;
-      const pad = n => String(n).padStart(2, '0');
-      return `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+      if (f.hora) return f.hora.split(':').slice(0, 2).join(':');
+      if (f.horario) {
+        const d = new Date(f.horario);
+        if (isNaN(d.getTime())) return f.horario;
+        const pad = n => String(n).padStart(2, '0');
+        return `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+      }
+      return '';
     })(),
   };
 }
