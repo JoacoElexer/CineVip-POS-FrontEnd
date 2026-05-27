@@ -1,17 +1,20 @@
 import { useState } from 'react';
-import { useUsuario } from '../hooks/useUsuario.js';
+import { useAuth } from '../context/AuthContext.jsx';
 import { HiOutlineUser, HiOutlineMail, HiOutlineShieldCheck, HiOutlineCalendar, HiOutlineSave } from 'react-icons/hi';
 import '../styles/cuenta.css';
 
 export default function Cuenta() {
-  const { usuario, actualizar } = useUsuario();
+  const { user } = useAuth();
   const [editing, setEditing] = useState(false);
-  const [form, setForm] = useState({ nombre: usuario.nombre || '', email: usuario.email || '' });
+  const [form, setForm] = useState({ nombre: user?.nombre || '', email: user?.email || '' });
 
   const handleSave = () => {
-    actualizar({ nombre: form.nombre, email: form.email });
+    const updated = { ...user, nombre: form.nombre, email: form.email };
+    localStorage.setItem('pos_cine_usuarios', JSON.stringify(updated));
     setEditing(false);
   };
+
+  if (!user) return null;
 
   return (
     <div className="cuenta">
@@ -24,7 +27,7 @@ export default function Cuenta() {
 
       <div className="cuenta-card">
         <div className="cuenta-avatar">
-          <span>{usuario.nombre?.charAt(0) || 'U'}</span>
+          <span>{user.nombre?.charAt(0) || 'U'}</span>
         </div>
 
         <div className="cuenta-info-grid">
@@ -33,7 +36,7 @@ export default function Cuenta() {
             {editing ? (
               <input type="text" value={form.nombre} onChange={e => setForm({ ...form, nombre: e.target.value })} />
             ) : (
-              <span className="cuenta-value">{usuario.nombre}</span>
+              <span className="cuenta-value">{user.nombre}</span>
             )}
           </div>
 
@@ -42,20 +45,20 @@ export default function Cuenta() {
             {editing ? (
               <input type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} />
             ) : (
-              <span className="cuenta-value">{usuario.email}</span>
+              <span className="cuenta-value">{user.email}</span>
             )}
           </div>
 
           <div className="cuenta-field">
             <label><HiOutlineShieldCheck /> Rol</label>
             <span className="cuenta-value">
-              <span className="cuenta-rol-badge">{usuario.rol}</span>
+              <span className="cuenta-rol-badge">{user.rol}</span>
             </span>
           </div>
 
           <div className="cuenta-field">
             <label><HiOutlineCalendar /> Último Acceso</label>
-            <span className="cuenta-value">{usuario.ultimo_acceso}</span>
+            <span className="cuenta-value">{user.ultimo_acceso}</span>
           </div>
         </div>
       </div>
