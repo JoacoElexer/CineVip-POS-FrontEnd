@@ -73,7 +73,7 @@ export function useVentas() {
     const nueva = { ...venta, fecha: venta.fecha || new Date().toISOString() };
     try {
       const res = await ventasService.createVenta(toBackend(nueva));
-      const registrada = { ...normalize(res.data), tipo: venta.tipo };
+      const registrada = { ...nueva, ...normalize(res.data) };
       setVentas(prev => { const u = [...prev, registrada]; saveCache(u); return u; });
       return registrada;
     } catch {

@@ -122,7 +122,7 @@ function AsientosPanel() {
     if (!salaFilter) return;
     const nuevos = [];
     for (let i = 0; i < Number(form.cantidad); i++) {
-      nuevos.push({ id_sala: Number(salaFilter), fila: form.fila.toUpperCase(), numero: Number(form.numero_inicio) + i });
+      nuevos.push({ sala_id: Number(salaFilter), fila: form.fila.toUpperCase(), numero: Number(form.numero_inicio) + i });
     }
     agregarLote(nuevos);
     setShow(false);

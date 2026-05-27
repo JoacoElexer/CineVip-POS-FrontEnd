@@ -18,10 +18,13 @@ function normalizeFuncion(f) {
 }
 
 function toBackendFuncion(f) {
-  const data = { ...f };
-  data.pelicula_id = data.pelicula_id_mongo;
-  delete data.pelicula_id_mongo;
-  return data;
+  return {
+    pelicula_id: f.pelicula_id_mongo,
+    sala_id: Number(f.id_sala),
+    fecha: f.fecha,
+    hora: f.hora,
+    precio_boleto: Number(f.precio),
+  };
 }
 
 function loadCache(key) {
@@ -176,7 +179,7 @@ export function useAsientos() {
         const norm = { ...res.data, id_asiento: res.data.id_asiento ?? res.data.id, id_sala: res.data.id_sala ?? res.data.sala_id };
         resultados.push(norm);
       } catch {
-        resultados.push({ ...a, id_asiento: 'temp_' + Date.now() + Math.random() });
+        resultados.push({ ...a, id_asiento: 'temp_' + Date.now() + Math.random(), id_sala: a.id_sala ?? a.sala_id });
       }
     }
     setAsientos(prev => { const u = [...prev, ...resultados]; saveCache(ASIENTO_KEY, u); return u; });
