@@ -514,7 +514,7 @@ function FuncionesPanel() {
               <tr key={f.id_funcion}>
                 <td className="admin-cell-name">{peliculas.find(p => p.id === f.pelicula_id)?.nombre || 'N/A'}</td>
                 <td>{salas.find(s => s.id_sala === f.id_sala)?.nombre || `Sala ${f.id_sala}`}</td>
-                <td>{f.horario ? new Date(f.horario).toLocaleString('es-MX') : '—'}</td>
+                <td>{f.horarioDisplay || '—'}</td>
                 <td>${(f.precio || 0).toFixed(2)}</td>
                 <td className="admin-actions">
                   <button onClick={() => openEdit(f)}><HiOutlinePencil /></button>

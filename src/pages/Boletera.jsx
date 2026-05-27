@@ -73,7 +73,7 @@ export default function Boletera() {
       const fila = String.fromCharCode(65 + r);
       const asientosEnFila = Math.min(cols, sala.capacidad - r * cols);
       for (let c = 0; c < asientosEnFila; c++) {
-        virtual.push({ fila, numero: c + 1 });
+        virtual.push({ fila, numero: c + 1, ...(r === 0 && c < 2 ? { tipo: 'silla_ruedas' } : {}) });
       }
     }
     return virtual;
@@ -137,7 +137,7 @@ export default function Boletera() {
               <option value="">Seleccionar función</option>
               {funcionesFiltradas.map(f => (
                 <option key={f.id_funcion} value={f.id_funcion}>
-                  {peliculas.find(p => p.id === f.pelicula_id)?.nombre || 'N/A'} - {f.horario ? new Date(f.horario).toLocaleString('es-MX') : 'N/A'}
+                  {peliculas.find(p => p.id === f.pelicula_id)?.nombre || 'N/A'} - {f.horarioDisplay || 'N/A'}
                 </option>
               ))}
             </select>
@@ -173,7 +173,7 @@ export default function Boletera() {
         <div style={{ padding: '8px 0' }}>
           <p style={{ marginBottom: '12px', color: 'var(--text-dark)' }}>
             <strong>{selectedPelicula?.nombre}</strong><br />
-            Sala: {selectedSala?.nombre} | {selectedFuncion?.horario ? new Date(selectedFuncion.horario).toLocaleString('es-MX') : ''}
+            Sala: {selectedSala?.nombre} | {selectedFuncion?.horarioDisplay || ''}
           </p>
           <p style={{ marginBottom: '16px', color: 'var(--text-dark)' }}>
             Asientos: {boleto.selectedSeats.join(', ')}<br />

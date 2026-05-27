@@ -13,7 +13,13 @@ function normalizeFuncion(f) {
     precio: Number(f.precio ?? f.precio_boleto) || 0,
     pelicula_id: f.pelicula_id ?? f.pelicula_id_mongo,
     pelicula_id_mongo: f.pelicula_id ?? f.pelicula_id_mongo,
-    horario: f.horario || (f.fecha && f.hora ? `${f.fecha} ${f.hora}`.trim() : ''),
+    horario: f.horario || (f.fecha && f.hora ? `${f.fecha}T${f.hora}`.trim() : ''),
+    horarioDisplay: (() => {
+      const h = f.horario || (f.fecha && f.hora ? `${f.fecha}T${f.hora}`.trim() : '');
+      if (!h) return '';
+      const d = new Date(h);
+      return isNaN(d.getTime()) ? h : d.toLocaleString('es-MX');
+    })(),
   };
 }
 

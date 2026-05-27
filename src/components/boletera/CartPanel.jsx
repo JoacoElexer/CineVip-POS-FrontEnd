@@ -35,7 +35,7 @@ export default function CartPanel({ pelicula, sala, funcion, selectedSeats, tota
         </div>
         <div className="cart-session-row">
           <span>Horario:</span>
-          <strong>{funcion.horario ? new Date(funcion.horario).toLocaleString('es-MX') : 'N/A'}</strong>
+          <strong>{funcion.horarioDisplay || 'N/A'}</strong>
         </div>
       </div>
 
