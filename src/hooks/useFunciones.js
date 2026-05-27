@@ -10,6 +10,7 @@ function normalizeFuncion(f) {
     ...f,
     id_funcion: f.id_funcion ?? f.id ?? f._id,
     id_sala: f.id_sala ?? f.sala_id,
+    precio: Number(f.precio ?? f.precio_boleto) || 0,
     pelicula_id_mongo: f.pelicula_id ?? f.pelicula_id_mongo,
     horario: f.horario || (f.fecha && f.hora ? `${f.fecha} ${f.hora}`.trim() : ''),
   };

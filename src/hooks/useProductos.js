@@ -4,7 +4,7 @@ import * as productosService from '../services/productos.js';
 const CACHE_KEY = 'pos_cine_productos_cache';
 
 function normalize(p) {
-  return { ...p, id_producto: p.id_producto ?? p.id ?? p._id, id_categoria: p.id_categoria ?? p.categoria_id, precio: p.precio ?? p.precio_unitario };
+  return { ...p, id_producto: p.id_producto ?? p.id ?? p._id, id_categoria: p.id_categoria ?? p.categoria_id,     precio: Number(p.precio ?? p.precio_unitario) || 0 };
 }
 
 function toBackend(p) {
