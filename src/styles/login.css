@@ -1,8 +1,9 @@
-.login-container {
+.login-page {
+  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 100%;
+  background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #16213e 100%);
 }
 
 .login-card {
@@ -11,7 +12,8 @@
   border-radius: 16px;
   padding: 40px;
   width: 100%;
-  max-width: 380px;
+  max-width: 400px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
 }
 
 .login-header {
@@ -102,4 +104,46 @@
 .login-btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+.login-success {
+  background: rgba(34,197,94,0.15);
+  border: 1px solid rgba(34,197,94,0.3);
+  color: #4ade80;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  text-align: center;
+}
+
+.login-select {
+  background: #2a2a3e;
+  border: 1px solid #3a3a4e;
+  border-radius: 8px;
+  padding: 10px 14px;
+  color: #fff;
+  font-size: 15px;
+  outline: none;
+  appearance: auto;
+}
+
+.login-select:focus {
+  border-color: #f59e0b;
+}
+
+.login-footer {
+  text-align: center;
+  margin-top: 24px;
+  color: #888;
+  font-size: 13px;
+}
+
+.login-footer a {
+  color: #f59e0b;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.login-footer a:hover {
+  text-decoration: underline;
 }

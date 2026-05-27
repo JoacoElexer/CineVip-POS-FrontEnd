@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, Navigate } from 'react-router-dom';
+import { useNavigate, Navigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 import '../styles/login.css';
 
@@ -32,7 +32,7 @@ export default function Login() {
   }
 
   return (
-    <div className="login-container">
+    <div className="login-page">
       <div className="login-card">
         <div className="login-header">
           <span className="login-logo">CV</span>
@@ -64,6 +64,9 @@ export default function Login() {
             {submitting ? 'Entrando...' : 'Entrar'}
           </button>
         </form>
+        <p className="login-footer">
+          ¿No tienes cuenta? <Link to="/register">Regístrate aquí</Link>
+        </p>
       </div>
     </div>
   );

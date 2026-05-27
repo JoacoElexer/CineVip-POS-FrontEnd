@@ -3,6 +3,7 @@ import { AuthProvider } from './context/AuthContext.jsx';
 import ProtectedRoute from './components/auth/ProtectedRoute.jsx';
 import MainLayout from './components/layout/MainLayout.jsx';
 import Login from './pages/Login.jsx';
+import Register from './pages/Register.jsx';
 import Dulceria from './pages/Dulceria.jsx';
 import Boletera from './pages/Boletera.jsx';
 import Inventario from './pages/Inventario.jsx';
@@ -15,8 +16,9 @@ export default function App() {
     <AuthProvider>
       <BrowserRouter>
         <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
           <Route element={<MainLayout />}>
-            <Route path="/login" element={<Login />} />
             <Route element={<ProtectedRoute />}>
               <Route path="/" element={<Navigate to="/dulceria" replace />} />
               <Route path="/dulceria" element={<Dulceria />} />
