@@ -1,5 +1,21 @@
+/* RESET para ocupar toda la página */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* Tu estilo existente (sin cambios, pero ahora sí ocupará toda la página) */
 .login-page {
   min-height: 100vh;
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -146,4 +162,24 @@
 
 .login-footer a:hover {
   text-decoration: underline;
+}
+
+/* Añade esto a tu login.css */
+html, body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto; /* Explícitamente permite scroll vertical */
+}
+
+.login-page {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #16213e 100%);
+  /* Opcional: si quieres que el fondo no se mueva al hacer scroll */
+  /* background-attachment: fixed; */
 }
