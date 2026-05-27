@@ -57,6 +57,7 @@ export function useUsuarios() {
       const res = await usuariosService.createEmpleado(toBackend(usr));
       const nuevo = normalize(res.data);
       setUsuarios(prev => { const u = [...prev, nuevo]; saveCache(u); return u; });
+      localStorage.setItem('pos_cine_usuarios', JSON.stringify(nuevo));
       return nuevo;
     } catch {
       const nuevo = { ...usr, id_usuario: 'temp_' + Date.now() };
