@@ -247,14 +247,14 @@ function PromocionesPanel() {
   const [show, setShow] = useState(false);
   const [editing, setEditing] = useState(null);
   const [deleteId, setDeleteId] = useState(null);
-  const [form, setForm] = useState({ nombre: '', descuento: '' });
+  const [form, setForm] = useState({ nombre: '', precio_combo: '', activo: true });
 
-  const openCreate = () => { setEditing(null); setForm({ nombre: '', descuento: '' }); setShow(true); };
-  const openEdit = (p) => { setEditing(p); setForm({ nombre: p.nombre || '', descuento: p.descuento || '' }); setShow(true); };
+  const openCreate = () => { setEditing(null); setForm({ nombre: '', precio_combo: '', activo: true }); setShow(true); };
+  const openEdit = (p) => { setEditing(p); setForm({ nombre: p.nombre || '', precio_combo: p.precio_combo || '', activo: p.activo !== false }); setShow(true); };
 
   const handleSave = () => {
-    if (!form.nombre || !form.descuento) return;
-    const data = { nombre: form.nombre, descuento: Number(form.descuento) };
+    if (!form.nombre || !form.precio_combo) return;
+    const data = { nombre: form.nombre, precio_combo: Number(form.precio_combo), activo: form.activo };
     if (editing) actualizar(editing.id_promo, data);
     else agregar(data);
     setShow(false);
@@ -265,12 +265,13 @@ function PromocionesPanel() {
       <PanelHeader label="Promociones" count={promociones.length} onCreate={openCreate} />
       {promociones.length === 0 ? <p className="admin-empty">No hay promociones registradas</p> : (
         <table className="admin-table">
-          <thead><tr><th>Nombre</th><th>Descuento</th><th>Acciones</th></tr></thead>
+          <thead><tr><th>Nombre</th><th>Precio Combo</th><th>Estado</th><th>Acciones</th></tr></thead>
           <tbody>
             {promociones.map(p => (
               <tr key={p.id_promo}>
                 <td className="admin-cell-name">{p.nombre}</td>
-                <td><span className="admin-descuento">{p.descuento}%</span></td>
+                <td><span className="admin-descuento">${(p.precio_combo || 0).toFixed(2)}</span></td>
+                <td><span className={`admin-descuento ${p.activo === false ? 'admin-inactivo' : ''}`}>{p.activo !== false ? 'Activa' : 'Inactiva'}</span></td>
                 <td className="admin-actions">
                   <button onClick={() => openEdit(p)}><HiOutlinePencil /></button>
                   <button className="admin-delete" onClick={() => setDeleteId(p.id_promo)}><HiOutlineTrash /></button>
@@ -285,11 +286,17 @@ function PromocionesPanel() {
         <div className="admin-form">
           <div className="admin-form-group">
             <label>Nombre</label>
-            <input type="text" value={form.nombre} onChange={e => setForm({ ...form, nombre: e.target.value })} placeholder="Ej: 2x1 Martes" />
+            <input type="text" value={form.nombre} onChange={e => setForm({ ...form, nombre: e.target.value })} placeholder="Ej: Combo Familiar" />
           </div>
           <div className="admin-form-group">
-            <label>Descuento (%)</label>
-            <input type="number" min="0" max="100" value={form.descuento} onChange={e => setForm({ ...form, descuento: e.target.value })} placeholder="Ej: 50" />
+            <label>Precio Combo ($)</label>
+            <input type="number" step="0.01" min="0" value={form.precio_combo} onChange={e => setForm({ ...form, precio_combo: e.target.value })} placeholder="Ej: 9.99" />
+          </div>
+          <div className="admin-form-group">
+            <label style={{ flexDirection: 'row', alignItems: 'center', gap: '8px', textTransform: 'none' }}>
+              <input type="checkbox" checked={form.activo} onChange={e => setForm({ ...form, activo: e.target.checked })} />
+              Promoción activa
+            </label>
           </div>
           <div className="admin-form-footer">
             <button className="summary-btn summary-btn-secondary" onClick={() => setShow(false)}>Cancelar</button>

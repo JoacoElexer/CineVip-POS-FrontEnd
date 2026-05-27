@@ -1,51 +1,81 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
+import * as productosService from '../services/productos.js';
 
-const STORAGE_KEY = 'pos_cine_productos';
+const CACHE_KEY = 'pos_cine_productos_cache';
 
-function loadProductos() {
-  try {
-    const data = localStorage.getItem(STORAGE_KEY);
-    return data ? JSON.parse(data) : [];
-  } catch { return []; }
+function normalize(p) {
+  return { ...p, id_producto: p.id_producto || p._id, precio: p.precio_unitario ?? p.precio };
 }
 
-function saveProductos(data) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+function toBackend(p) {
+  const data = { ...p };
+  data.precio_unitario = data.precio;
+  delete data.precio;
+  return data;
 }
 
-let nextId = Date.now();
+function loadCache() {
+  try { const d = localStorage.getItem(CACHE_KEY); return d ? JSON.parse(d) : []; } catch { return []; }
+}
+function saveCache(data) { localStorage.setItem(CACHE_KEY, JSON.stringify(data)); }
 
 export function useProductos() {
-  const [productos, setProductos] = useState(loadProductos);
+  const [productos, setProductos] = useState(loadCache);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const agregar = useCallback((producto) => {
-    const nuevo = { ...producto, id_producto: nextId++ };
-    setProductos(prev => {
-      const updated = [...prev, nuevo];
-      saveProductos(updated);
-      return updated;
-    });
-    return nuevo;
+  useEffect(() => {
+    let ignore = false;
+    productosService.getProductos()
+      .then(res => { if (ignore) return; const data = Array.isArray(res.data) ? res.data : []; const normalized = data.map(normalize); setProductos(normalized); saveCache(normalized); setError(null); })
+      .catch(() => { if (ignore) return; const c = loadCache(); if (c.length) setProductos(c); setError('Error al conectar. Usando datos locales.'); })
+      .finally(() => { if (!ignore) setLoading(false); });
+    return () => { ignore = true; };
   }, []);
 
-  const actualizar = useCallback((id, data) => {
-    setProductos(prev => {
-      const updated = prev.map(p => p.id_producto === id ? { ...p, ...data } : p);
-      saveProductos(updated);
-      return updated;
-    });
+  const recargar = useCallback(async () => {
+    setLoading(true); setError(null);
+    try {
+      const res = await productosService.getProductos();
+      const data = Array.isArray(res.data) ? res.data : [];
+      const normalized = data.map(normalize);
+      setProductos(normalized); saveCache(normalized);
+    } catch {
+      const c = loadCache();
+      if (c.length) setProductos(c);
+      setError('Error al conectar. Usando datos locales.');
+    } finally { setLoading(false); }
   }, []);
 
-  const eliminar = useCallback((id) => {
-    setProductos(prev => {
-      const updated = prev.filter(p => p.id_producto !== id);
-      saveProductos(updated);
-      return updated;
-    });
+  const agregar = useCallback(async (p) => {
+    try {
+      const res = await productosService.createProducto(toBackend(p));
+      const nuevo = normalize(res.data);
+      setProductos(prev => { const u = [...prev, nuevo]; saveCache(u); return u; });
+      return nuevo;
+    } catch {
+      const nuevo = { ...p, id_producto: 'temp_' + Date.now() };
+      setProductos(prev => { const u = [...prev, nuevo]; saveCache(u); return u; });
+      return nuevo;
+    }
   }, []);
 
-  const getById = useCallback((id) => productos.find(p => p.id_producto === id),
-    [productos]);
+  const actualizar = useCallback(async (id, data) => {
+    try {
+      const res = await productosService.updateProducto(id, toBackend(data));
+      const actualizado = normalize(res.data);
+      setProductos(prev => { const u = prev.map(p => p.id_producto === id ? actualizado : p); saveCache(u); return u; });
+    } catch {
+      setProductos(prev => { const u = prev.map(p => p.id_producto === id ? { ...p, ...data } : p); saveCache(u); return u; });
+    }
+  }, []);
 
-  return { productos, agregar, actualizar, eliminar, getById };
+  const eliminar = useCallback(async (id) => {
+    try { await productosService.deleteProducto(id); } catch { /* silent */ }
+    setProductos(prev => { const u = prev.filter(p => p.id_producto !== id); saveCache(u); return u; });
+  }, []);
+
+  const getById = useCallback((id) => productos.find(p => p.id_producto === id), [productos]);
+
+  return { productos, loading, error, agregar, actualizar, eliminar, getById, recargar };
 }

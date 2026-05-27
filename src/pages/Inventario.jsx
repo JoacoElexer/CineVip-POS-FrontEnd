@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { HiOutlineSearch, HiOutlinePencil, HiOutlineTrash, HiOutlinePlus } from 'react-icons/hi';
 import { useProductos } from '../hooks/useProductos.js';
-import { useCategorias, useInventario } from '../hooks/useCategorias.js';
+import { useCategorias } from '../hooks/useCategorias.js';
 import Modal from '../components/common/Modal.jsx';
 import ConfirmDialog from '../components/common/ConfirmDialog.jsx';
 import EmptyState from '../components/common/EmptyState.jsx';
@@ -10,13 +10,12 @@ import '../styles/inventario.css';
 export default function Inventario() {
   const { productos, agregar, actualizar, eliminar } = useProductos();
   const { categorias } = useCategorias();
-  const { inventario, upsert: upsertInv } = useInventario();
 
   const [search, setSearch] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [editing, setEditing] = useState(null);
   const [deleteId, setDeleteId] = useState(null);
-  const [form, setForm] = useState({ nombre: '', id_categoria: '', precio: '', stock: '', emoji: '📦' });
+  const [form, setForm] = useState({ nombre: '', id_categoria: '', precio: '', stock_actual: '', emoji: '📦' });
 
   const filtered = productos.filter(p =>
     p.nombre?.toLowerCase().includes(search.toLowerCase())
@@ -24,18 +23,17 @@ export default function Inventario() {
 
   const openCreate = () => {
     setEditing(null);
-    setForm({ nombre: '', id_categoria: categorias[0]?.id_categoria || '', precio: '', stock: '', emoji: '📦' });
+    setForm({ nombre: '', id_categoria: categorias[0]?.id_categoria || '', precio: '', stock_actual: '', emoji: '📦' });
     setShowModal(true);
   };
 
   const openEdit = (producto) => {
     setEditing(producto);
-    const inv = inventario.find(i => i.id_producto === producto.id_producto);
     setForm({
       nombre: producto.nombre || '',
       id_categoria: producto.id_categoria || '',
       precio: producto.precio || '',
-      stock: inv?.stock_actual || '',
+      stock_actual: producto.stock_actual ?? '',
       emoji: producto.emoji || '📦',
     });
     setShowModal(true);
@@ -47,15 +45,14 @@ export default function Inventario() {
       nombre: form.nombre,
       id_categoria: Number(form.id_categoria),
       precio: Number(form.precio),
+      stock_actual: form.stock_actual !== '' ? Number(form.stock_actual) : 0,
       emoji: form.emoji,
     };
 
     if (editing) {
       actualizar(editing.id_producto, data);
-      if (form.stock !== '') upsertInv({ id_producto: editing.id_producto, stock_actual: Number(form.stock) });
     } else {
-      const nuevo = agregar(data);
-      if (form.stock !== '') upsertInv({ id_producto: nuevo.id_producto, stock_actual: Number(form.stock) });
+      agregar(data);
     }
     setShowModal(false);
   };
@@ -66,7 +63,7 @@ export default function Inventario() {
   };
 
   const getCategoriaNombre = (id) => categorias.find(c => c.id_categoria === id)?.nombre || 'N/A';
-  const getStock = (id) => inventario.find(i => i.id_producto === id)?.stock_actual ?? '—';
+  const getStock = (p) => p.stock_actual ?? '—';
 
   return (
     <div className="inventario">
@@ -105,7 +102,7 @@ export default function Inventario() {
                     {p.nombre}
                   </td>
                   <td>{getCategoriaNombre(p.id_categoria)}</td>
-                  <td><span className="inv-stock">{getStock(p.id_producto)}</span></td>
+                  <td><span className="inv-stock">{getStock(p)}</span></td>
                   <td className="inv-price">${(p.precio || 0).toFixed(2)}</td>
                   <td>
                     <div className="inv-actions">
@@ -142,7 +139,7 @@ export default function Inventario() {
             </div>
             <div className="inv-form-group" style={{ flex: 1 }}>
               <label>Stock</label>
-              <input type="number" min="0" value={form.stock} onChange={e => setForm({ ...form, stock: e.target.value })} placeholder="0" />
+              <input type="number" min="0" value={form.stock_actual} onChange={e => setForm({ ...form, stock_actual: e.target.value })} placeholder="0" />
             </div>
           </div>
           <div className="inv-form-group">
