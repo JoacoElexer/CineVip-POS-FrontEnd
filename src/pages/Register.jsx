@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate, Navigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 import { createEmpleado } from '../services/usuarios.js';
+import { addPassword } from '../utils/passwordsStorage.js';
 import '../styles/login.css';
 
 export default function Register() {
@@ -34,6 +35,7 @@ export default function Register() {
         rol: form.rol,
         activo: true,
       });
+      addPassword({ nombre: form.nombre, usuario: form.usuario, password: form.password, rol: form.rol });
       setSuccess('Cuenta creada exitosamente. Redirigiendo al login...');
       setTimeout(() => navigate('/login', { replace: true }), 1500);
     } catch (err) {

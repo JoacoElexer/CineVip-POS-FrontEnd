@@ -5,7 +5,9 @@ import { usePeliculas } from '../hooks/usePeliculas.js';
 import { useUsuarios } from '../hooks/useUsuarios.js';
 import Modal from '../components/common/Modal.jsx';
 import ConfirmDialog from '../components/common/ConfirmDialog.jsx';
-import { HiOutlinePlus, HiOutlinePencil, HiOutlineTrash } from 'react-icons/hi';
+import { HiOutlinePlus, HiOutlinePencil, HiOutlineTrash, HiOutlineDownload } from 'react-icons/hi';
+import { addPassword } from '../utils/passwordsStorage.js';
+import { downloadPasswords } from '../utils/downloadPasswords.js';
 import '../styles/admin.css';
 
 const TABS = [
@@ -598,13 +600,18 @@ function UsuariosPanel() {
     if (!form.nombre || !form.usuario) return;
     if (!editing && !form.password) return;
     if (editing) actualizar(editing.id_usuario, form);
-    else agregar(form);
+    else {
+      agregar(form);
+      if (form.password) addPassword({ nombre: form.nombre, usuario: form.usuario, password: form.password, rol: form.rol });
+    }
     setShow(false);
   };
 
   return (
     <>
-      <PanelHeader label="Usuarios" count={usuarios.length} onCreate={openCreate} />
+      <PanelHeader label="Usuarios" count={usuarios.length} onCreate={openCreate}>
+        <button className="inv-add-btn" onClick={downloadPasswords} title="Descargar contraseñas guardadas"><HiOutlineDownload /> Passwords</button>
+      </PanelHeader>
       {usuarios.length === 0 ? <p className="admin-empty">No hay usuarios registrados</p> : (
         <table className="admin-table">
           <thead><tr><th>Nombre</th><th>Usuario</th><th>Rol</th><th>Acciones</th></tr></thead>
@@ -678,11 +685,14 @@ function UsuariosPanel() {
   );
 }
 
-function PanelHeader({ label, count, onCreate }) {
+function PanelHeader({ label, count, onCreate, children }) {
   return (
     <div className="admin-panel-header">
       <span className="admin-panel-count">{count} registro(s)</span>
-      <button className="inv-add-btn" onClick={onCreate}><HiOutlinePlus /> Agregar {label}</button>
+      <div className="admin-header-actions">
+        {children}
+        <button className="inv-add-btn" onClick={onCreate}><HiOutlinePlus /> Agregar {label}</button>
+      </div>
     </div>
   );
 }
