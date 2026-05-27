@@ -20,12 +20,12 @@ function getUsuarioId() {
     const data = localStorage.getItem('pos_cine_usuarios');
     if (data) { const u = JSON.parse(data); return u.id_usuario || null; }
   } catch { /* ignore */ }
-  return null;
+  return 1;
 }
 
 function toBackend(v) {
   const data = { ...v };
-  data.empleado_id = data.empleado_id ?? data.id_usuario ?? getUsuarioId();
+  data.empleado_id = Number(data.empleado_id ?? data.id_usuario ?? getUsuarioId());
   data.total_pagado = data.total_pagado ?? data.total;
   data.metodo_pago = data.metodo_pago || 'Efectivo';
   data.subtotal = data.subtotal ?? data.total;

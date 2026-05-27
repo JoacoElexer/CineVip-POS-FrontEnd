@@ -9,8 +9,13 @@ function normalize(u) {
 
 function toBackend(u) {
   const data = { ...u };
-  data.id_empleado = data.id_usuario;
+  data.usuario = data.usuario || data.email;
+  if (!data.password) delete data.password;
   delete data.id_usuario;
+  delete data.id_empleado;
+  delete data.email;
+  delete data.telefono;
+  delete data.activo;
   return data;
 }
 

@@ -465,25 +465,26 @@ function UsuariosPanel() {
   const [show, setShow] = useState(false);
   const [editing, setEditing] = useState(null);
   const [deleteId, setDeleteId] = useState(null);
-  const [form, setForm] = useState({ nombre: '', email: '', rol: 'Operador', telefono: '', activo: true });
+  const [form, setForm] = useState({ nombre: '', email: '', usuario: '', password: '', rol: 'Operador', telefono: '', activo: true });
 
   const openCreate = () => {
     setEditing(null);
-    setForm({ nombre: '', email: '', rol: 'Operador', telefono: '', activo: true });
+    setForm({ nombre: '', email: '', usuario: '', password: '', rol: 'Operador', telefono: '', activo: true });
     setShow(true);
   };
 
   const openEdit = (u) => {
     setEditing(u);
     setForm({
-      nombre: u.nombre || '', email: u.email || '', rol: u.rol || 'Operador',
-      telefono: u.telefono || '', activo: u.activo !== false,
+      nombre: u.nombre || '', email: u.email || '', usuario: u.usuario || '', password: '',
+      rol: u.rol || 'Operador', telefono: u.telefono || '', activo: u.activo !== false,
     });
     setShow(true);
   };
 
   const handleSave = () => {
-    if (!form.nombre || !form.email) return;
+    if (!form.nombre || !form.usuario) return;
+    if (!editing && !form.password) return;
     if (editing) actualizar(editing.id_usuario, form);
     else agregar(form);
     setShow(false);
@@ -494,15 +495,13 @@ function UsuariosPanel() {
       <PanelHeader label="Usuarios" count={usuarios.length} onCreate={openCreate} />
       {usuarios.length === 0 ? <p className="admin-empty">No hay usuarios registrados</p> : (
         <table className="admin-table">
-          <thead><tr><th>Nombre</th><th>Email</th><th>Rol</th><th>Teléfono</th><th>Estado</th><th>Acciones</th></tr></thead>
+          <thead><tr><th>Nombre</th><th>Usuario</th><th>Rol</th><th>Acciones</th></tr></thead>
           <tbody>
             {usuarios.map(u => (
               <tr key={u.id_usuario}>
                 <td className="admin-cell-name">{u.nombre}</td>
-                <td>{u.email}</td>
+                <td>{u.usuario}</td>
                 <td><span className="admin-descuento">{u.rol}</span></td>
-                <td>{u.telefono || '—'}</td>
-                <td><span className={`admin-descuento ${u.activo === false ? 'admin-inactivo' : ''}`}>{u.activo !== false ? 'Activo' : 'Inactivo'}</span></td>
                 <td className="admin-actions">
                   <button onClick={() => openEdit(u)}><HiOutlinePencil /></button>
                   <button className="admin-delete" onClick={() => setDeleteId(u.id_usuario)}><HiOutlineTrash /></button>
@@ -528,6 +527,16 @@ function UsuariosPanel() {
                 <option value="Operador">Operador</option>
                 <option value="Cajero">Cajero</option>
               </select>
+            </div>
+          </div>
+          <div className="admin-form-row">
+            <div className="admin-form-group">
+              <label>Usuario</label>
+              <input type="text" value={form.usuario} onChange={e => setForm({ ...form, usuario: e.target.value })} placeholder="usuario" />
+            </div>
+            <div className="admin-form-group">
+              <label>Contraseña</label>
+              <input type="password" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} placeholder={editing ? 'Dejar vacío para no cambiar' : '********'} />
             </div>
           </div>
           <div className="admin-form-row">
