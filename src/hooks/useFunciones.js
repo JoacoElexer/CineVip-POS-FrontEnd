@@ -8,9 +8,10 @@ const ASIENTO_KEY = 'pos_cine_asientos_cache';
 function normalizeFuncion(f) {
   return {
     ...f,
-    id_funcion: f.id_funcion || f._id,
-    pelicula_id_mongo: f.pelicula_id || f.pelicula_id_mongo,
-    horario: f.horario || (f.fecha && f.hora ? `${f.fecha} ${f.f.hora}`.trim() : ''),
+    id_funcion: f.id_funcion ?? f.id ?? f._id,
+    id_sala: f.id_sala ?? f.sala_id,
+    pelicula_id_mongo: f.pelicula_id ?? f.pelicula_id_mongo,
+    horario: f.horario || (f.fecha && f.hora ? `${f.fecha} ${f.hora}`.trim() : ''),
   };
 }
 
@@ -34,7 +35,7 @@ export function useSalas() {
   useEffect(() => {
     let ignore = false;
     funcionesService.getSalas()
-      .then(res => { if (ignore) return; const data = Array.isArray(res.data) ? res.data : []; setSalas(data); saveCache(SALA_KEY, data); setError(null); })
+      .then(res => { if (ignore) return; const data = Array.isArray(res.data) ? res.data : []; const norm = data.map(s => ({ ...s, id_sala: s.id_sala ?? s.id })); setSalas(norm); saveCache(SALA_KEY, norm); setError(null); })
       .catch(() => { if (ignore) return; const c = loadCache(SALA_KEY); if (c.length) setSalas(c); setError('Error al conectar. Usando datos locales.'); })
       .finally(() => { if (!ignore) setLoading(false); });
     return () => { ignore = true; };
@@ -45,7 +46,8 @@ export function useSalas() {
     try {
       const res = await funcionesService.getSalas();
       const data = Array.isArray(res.data) ? res.data : [];
-      setSalas(data); saveCache(SALA_KEY, data);
+      const norm = data.map(s => ({ ...s, id_sala: s.id_sala ?? s.id }));
+      setSalas(norm); saveCache(SALA_KEY, norm);
     } catch {
       const c = loadCache(SALA_KEY);
       if (c.length) setSalas(c);
@@ -153,8 +155,9 @@ export function useAsientos() {
     try {
       const res = await funcionesService.getAsientosPorSala(salaId);
       const data = Array.isArray(res.data) ? res.data : [];
-      setAsientos(data); saveCache(ASIENTO_KEY, data);
-      return data;
+      const norm = data.map(a => ({ ...a, id_asiento: a.id_asiento ?? a.id, id_sala: a.id_sala ?? a.sala_id }));
+      setAsientos(norm); saveCache(ASIENTO_KEY, norm);
+      return norm;
     } catch {
       const c = loadCache(ASIENTO_KEY);
       if (c.length) setAsientos(c);
@@ -168,7 +171,8 @@ export function useAsientos() {
     for (const a of nuevosAsientos) {
       try {
         const res = await funcionesService.createAsiento(a);
-        resultados.push(res.data);
+        const norm = { ...res.data, id_asiento: res.data.id_asiento ?? res.data.id, id_sala: res.data.id_sala ?? res.data.sala_id };
+        resultados.push(norm);
       } catch {
         resultados.push({ ...a, id_asiento: 'temp_' + Date.now() + Math.random() });
       }

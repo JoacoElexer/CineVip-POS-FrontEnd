@@ -17,7 +17,7 @@ export function useCategorias() {
   useEffect(() => {
     let ignore = false;
     categoriasService.getCategorias()
-      .then(res => { if (ignore) return; const data = Array.isArray(res.data) ? res.data : []; setCategorias(data); saveCache(CAT_KEY, data); setError(null); })
+      .then(res => { if (ignore) return; const data = Array.isArray(res.data) ? res.data : []; const norm = data.map(c => ({ ...c, id_categoria: c.id_categoria ?? c.id })); setCategorias(norm); saveCache(CAT_KEY, norm); setError(null); })
       .catch(() => { if (ignore) return; const c = loadCache(CAT_KEY); if (c.length) setCategorias(c); setError('Error al conectar. Usando datos locales.'); })
       .finally(() => { if (!ignore) setLoading(false); });
     return () => { ignore = true; };
@@ -28,7 +28,8 @@ export function useCategorias() {
     try {
       const res = await categoriasService.getCategorias();
       const data = Array.isArray(res.data) ? res.data : [];
-      setCategorias(data); saveCache(CAT_KEY, data);
+      const norm = data.map(c => ({ ...c, id_categoria: c.id_categoria ?? c.id }));
+      setCategorias(norm); saveCache(CAT_KEY, norm);
     } catch {
       const c = loadCache(CAT_KEY);
       if (c.length) setCategorias(c);

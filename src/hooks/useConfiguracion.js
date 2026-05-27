@@ -37,7 +37,7 @@ export function usePromociones() {
   useEffect(() => {
     let ignore = false;
     promocionesService.getPromociones()
-      .then(res => { if (ignore) return; const data = Array.isArray(res.data) ? res.data : []; setPromociones(data); saveCache(PROMO_KEY, data); setError(null); })
+      .then(res => { if (ignore) return; const data = Array.isArray(res.data) ? res.data : []; const norm = data.map(p => ({ ...p, id_promo: p.id_promo ?? p.id })); setPromociones(norm); saveCache(PROMO_KEY, norm); setError(null); })
       .catch(() => { if (ignore) return; const c = loadCache(PROMO_KEY); if (c.length) setPromociones(c); setError('Error al conectar. Usando datos locales.'); })
       .finally(() => { if (!ignore) setLoading(false); });
     return () => { ignore = true; };
@@ -48,7 +48,8 @@ export function usePromociones() {
     try {
       const res = await promocionesService.getPromociones();
       const data = Array.isArray(res.data) ? res.data : [];
-      setPromociones(data); saveCache(PROMO_KEY, data);
+      const norm = data.map(p => ({ ...p, id_promo: p.id_promo ?? p.id }));
+      setPromociones(norm); saveCache(PROMO_KEY, norm);
     } catch {
       const c = loadCache(PROMO_KEY);
       if (c.length) setPromociones(c);

@@ -4,12 +4,14 @@ import * as productosService from '../services/productos.js';
 const CACHE_KEY = 'pos_cine_productos_cache';
 
 function normalize(p) {
-  return { ...p, id_producto: p.id_producto || p._id, precio: p.precio_unitario ?? p.precio };
+  return { ...p, id_producto: p.id_producto ?? p.id ?? p._id, id_categoria: p.id_categoria ?? p.categoria_id, precio: p.precio ?? p.precio_unitario };
 }
 
 function toBackend(p) {
   const data = { ...p };
+  data.categoria_id = data.id_categoria;
   data.precio_unitario = data.precio;
+  delete data.id_categoria;
   delete data.precio;
   return data;
 }

@@ -4,7 +4,7 @@ import * as usuariosService from '../services/usuarios.js';
 const CACHE_KEY = 'pos_cine_usuarios_cache';
 
 function normalize(u) {
-  return { ...u, id_usuario: u.id_empleado || u.id_usuario || u._id };
+  return { ...u, id_usuario: u.id_usuario ?? u.id_empleado ?? u.id ?? u._id };
 }
 
 function toBackend(u) {
