@@ -32,7 +32,7 @@ export default function Login() {
   }
 
   return (
-    <div className="login-page">
+    <div className="login-container">
       <div className="login-card">
         <div className="login-header">
           <span className="login-logo">CV</span>

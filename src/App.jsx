@@ -15,18 +15,16 @@ export default function App() {
     <AuthProvider>
       <BrowserRouter>
         <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route element={<ProtectedRoute />}>
-            <Route element={<MainLayout />}>
+          <Route element={<MainLayout />}>
+            <Route path="/login" element={<Login />} />
+            <Route element={<ProtectedRoute />}>
               <Route path="/" element={<Navigate to="/dulceria" replace />} />
               <Route path="/dulceria" element={<Dulceria />} />
               <Route path="/boletera" element={<Boletera />} />
               <Route path="/reportes" element={<ReporteCierre />} />
               <Route path="/cuenta" element={<Cuenta />} />
             </Route>
-          </Route>
-          <Route element={<ProtectedRoute allowedRoles={['Administrador']} />}>
-            <Route element={<MainLayout />}>
+            <Route element={<ProtectedRoute allowedRoles={['Administrador']} />}>
               <Route path="/inventario" element={<Inventario />} />
               <Route path="/admin" element={<Admin />} />
             </Route>
