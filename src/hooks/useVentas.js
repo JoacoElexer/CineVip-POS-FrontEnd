@@ -17,7 +17,7 @@ function normalize(v) {
 
 function getUsuarioId() {
   try {
-    const data = localStorage.getItem('pos_cine_usuarios');
+    const data = sessionStorage.getItem('pos_cine_usuarios');
     if (data) { const u = JSON.parse(data); return u.id_usuario || null; }
   } catch { /* ignore */ }
   return 1;
@@ -36,9 +36,9 @@ function toBackend(v) {
 }
 
 function loadCache() {
-  try { const d = localStorage.getItem(CACHE_KEY); return d ? JSON.parse(d) : []; } catch { return []; }
+  try { const d = sessionStorage.getItem(CACHE_KEY); return d ? JSON.parse(d) : []; } catch { return []; }
 }
-function saveCache(data) { localStorage.setItem(CACHE_KEY, JSON.stringify(data)); }
+function saveCache(data) { sessionStorage.setItem(CACHE_KEY, JSON.stringify(data)); }
 
 export function useVentas() {
   const [ventas, setVentas] = useState(loadCache);

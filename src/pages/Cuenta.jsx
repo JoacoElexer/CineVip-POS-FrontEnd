@@ -10,7 +10,7 @@ export default function Cuenta() {
 
   const handleSave = () => {
     const updated = { ...user, nombre: form.nombre, email: form.email };
-    localStorage.setItem('pos_cine_usuarios', JSON.stringify(updated));
+    sessionStorage.setItem('pos_cine_usuarios', JSON.stringify(updated));
     setEditing(false);
   };
 

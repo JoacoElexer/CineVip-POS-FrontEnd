@@ -6,8 +6,8 @@ const AuthContext = createContext(null);
 
 function getInitialUser() {
   try {
-    const saved = localStorage.getItem('pos_cine_usuarios');
-    const token = localStorage.getItem('token');
+    const saved = sessionStorage.getItem('pos_cine_usuarios');
+    const token = sessionStorage.getItem('token');
     if (saved && token) return JSON.parse(saved);
   } catch {
     // ignore parse errors
@@ -19,8 +19,8 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(getInitialUser);
 
   function clearSession() {
-    localStorage.removeItem('pos_cine_usuarios');
-    localStorage.removeItem('token');
+    sessionStorage.removeItem('pos_cine_usuarios');
+    sessionStorage.removeItem('token');
     setUser(null);
   }
 
@@ -35,8 +35,8 @@ export function AuthProvider({ children }) {
       usuario: empleado.usuario,
       rol: empleado.rol,
     };
-    if (token) localStorage.setItem('token', token);
-    localStorage.setItem('pos_cine_usuarios', JSON.stringify(userData));
+    if (token) sessionStorage.setItem('token', token);
+    sessionStorage.setItem('pos_cine_usuarios', JSON.stringify(userData));
     setUser(userData);
     return userData;
   }

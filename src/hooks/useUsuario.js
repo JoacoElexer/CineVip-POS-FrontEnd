@@ -10,7 +10,7 @@ export function useUsuario() {
   const actualizar = useCallback((data) => {
     setUsuario(prev => {
       const updated = { ...prev, ...data };
-      localStorage.setItem(KEY, JSON.stringify(updated));
+      sessionStorage.setItem(KEY, JSON.stringify(updated));
       return updated;
     });
   }, []);
