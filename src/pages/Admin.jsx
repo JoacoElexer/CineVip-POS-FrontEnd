@@ -465,11 +465,11 @@ function UsuariosPanel() {
   const [show, setShow] = useState(false);
   const [editing, setEditing] = useState(null);
   const [deleteId, setDeleteId] = useState(null);
-  const [form, setForm] = useState({ nombre: '', email: '', usuario: '', password: '', rol: 'Operador', telefono: '', activo: true });
+  const [form, setForm] = useState({ nombre: '', email: '', usuario: '', password: '', rol: 'Cajero', telefono: '', activo: true });
 
   const openCreate = () => {
     setEditing(null);
-    setForm({ nombre: '', email: '', usuario: '', password: '', rol: 'Operador', telefono: '', activo: true });
+    setForm({ nombre: '', email: '', usuario: '', password: '', rol: 'Cajero', telefono: '', activo: true });
     setShow(true);
   };
 
@@ -477,7 +477,7 @@ function UsuariosPanel() {
     setEditing(u);
     setForm({
       nombre: u.nombre || '', email: u.email || '', usuario: u.usuario || '', password: '',
-      rol: u.rol || 'Operador', telefono: u.telefono || '', activo: u.activo !== false,
+      rol: u.rol || 'Cajero', telefono: u.telefono || '', activo: u.activo !== false,
     });
     setShow(true);
   };
@@ -522,9 +522,7 @@ function UsuariosPanel() {
             <div className="admin-form-group" style={{ flex: 1 }}>
               <label>Rol</label>
               <select value={form.rol} onChange={e => setForm({ ...form, rol: e.target.value })}>
-                <option value="Admin">Admin</option>
-                <option value="Supervisor">Supervisor</option>
-                <option value="Operador">Operador</option>
+                <option value="Administrador">Administrador</option>
                 <option value="Cajero">Cajero</option>
               </select>
             </div>

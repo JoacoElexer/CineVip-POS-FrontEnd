@@ -6,9 +6,9 @@ function load() {
   try {
     const data = localStorage.getItem(KEY);
     const parsed = data ? JSON.parse(data) : null;
-    return parsed || { id_usuario: 1, nombre: 'Operador', email: 'operador@cinevip.com', rol: 'Admin', ultimo_acceso: new Date().toLocaleDateString('es-MX') };
+    return parsed || { id_usuario: 1, nombre: 'Operador', email: 'operador@cinevip.com', rol: 'Administrador', ultimo_acceso: new Date().toLocaleDateString('es-MX') };
   } catch {
-    return { id_usuario: 1, nombre: 'Operador', email: 'operador@cinevip.com', rol: 'Admin', ultimo_acceso: new Date().toLocaleDateString('es-MX') };
+    return { id_usuario: 1, nombre: 'Operador', email: 'operador@cinevip.com', rol: 'Administrador', ultimo_acceso: new Date().toLocaleDateString('es-MX') };
   }
 }
 
