@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useSalas, useAsientos } from '../hooks/useFunciones.js';
+import { useSalas, useAsientos, useFunciones } from '../hooks/useFunciones.js';
 import { useMetodosPago, usePromociones } from '../hooks/useConfiguracion.js';
 import { usePeliculas } from '../hooks/usePeliculas.js';
 import { useUsuarios } from '../hooks/useUsuarios.js';
@@ -12,6 +12,7 @@ const TABS = [
   { id: 'salas', label: 'Salas' },
   { id: 'asientos', label: 'Asientos' },
   { id: 'peliculas', label: 'Películas' },
+  { id: 'funciones', label: 'Funciones' },
   { id: 'usuarios', label: 'Usuarios' },
   { id: 'pagos', label: 'Métodos de Pago' },
   { id: 'promos', label: 'Promociones' },
@@ -38,6 +39,7 @@ export default function Admin() {
         {activeTab === 'salas' && <SalasPanel />}
         {activeTab === 'asientos' && <AsientosPanel />}
         {activeTab === 'peliculas' && <PeliculasPanel />}
+        {activeTab === 'funciones' && <FuncionesPanel />}
         {activeTab === 'usuarios' && <UsuariosPanel />}
         {activeTab === 'pagos' && <MetodosPagoPanel />}
         {activeTab === 'promos' && <PromocionesPanel />}
@@ -456,6 +458,116 @@ function PeliculasPanel() {
       </Modal>
 
       <ConfirmDialog isOpen={!!deleteId} message="¿Eliminar esta película?" onConfirm={() => { eliminar(deleteId); setDeleteId(null); }} onCancel={() => setDeleteId(null)} confirmText="Eliminar" danger />
+    </>
+  );
+}
+
+function FuncionesPanel() {
+  const { funciones, agregarFuncion, editarFuncion, eliminarFuncion } = useFunciones();
+  const { peliculas } = usePeliculas();
+  const { salas } = useSalas();
+  const [show, setShow] = useState(false);
+  const [editing, setEditing] = useState(null);
+  const [deleteId, setDeleteId] = useState(null);
+  const [form, setForm] = useState({ pelicula_id_mongo: '', id_sala: '', fecha: '', hora: '', precio: '' });
+
+  const openCreate = () => {
+    setEditing(null);
+    setForm({ pelicula_id_mongo: '', id_sala: '', fecha: '', hora: '', precio: '' });
+    setShow(true);
+  };
+
+  const openEdit = (f) => {
+    setEditing(f);
+    setForm({
+      pelicula_id_mongo: f.pelicula_id_mongo || f.pelicula_id || '',
+      id_sala: f.id_sala || '',
+      fecha: f.fecha || (f.horario ? f.horario.split('T')[0] : ''),
+      hora: f.hora || (f.horario ? f.horario.split('T')[1]?.split('.')[0] || f.horario.split(' ')[1] || '' : ''),
+      precio: f.precio || '',
+    });
+    setShow(true);
+  };
+
+  const handleSave = () => {
+    if (!form.pelicula_id_mongo || !form.id_sala || !form.fecha || !form.hora || !form.precio) return;
+    const data = {
+      pelicula_id_mongo: form.pelicula_id_mongo,
+      id_sala: Number(form.id_sala),
+      fecha: form.fecha,
+      hora: form.hora,
+      precio: Number(form.precio),
+    };
+    if (editing) editarFuncion(editing.id_funcion, data);
+    else agregarFuncion(data);
+    setShow(false);
+  };
+
+  return (
+    <>
+      <PanelHeader label="Funciones" count={funciones.length} onCreate={openCreate} />
+      {funciones.length === 0 ? <p className="admin-empty">No hay funciones registradas</p> : (
+        <table className="admin-table">
+          <thead><tr><th>Película</th><th>Sala</th><th>Horario</th><th>Precio</th><th>Acciones</th></tr></thead>
+          <tbody>
+            {funciones.map(f => (
+              <tr key={f.id_funcion}>
+                <td className="admin-cell-name">{peliculas.find(p => p.id === f.pelicula_id)?.nombre || 'N/A'}</td>
+                <td>{salas.find(s => s.id_sala === f.id_sala)?.nombre || `Sala ${f.id_sala}`}</td>
+                <td>{f.horario ? new Date(f.horario).toLocaleString('es-MX') : '—'}</td>
+                <td>${(f.precio || 0).toFixed(2)}</td>
+                <td className="admin-actions">
+                  <button onClick={() => openEdit(f)}><HiOutlinePencil /></button>
+                  <button className="admin-delete" onClick={() => setDeleteId(f.id_funcion)}><HiOutlineTrash /></button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+
+      <Modal isOpen={show} onClose={() => setShow(false)} title={editing ? 'Editar Función' : 'Nueva Función'}>
+        <div className="admin-form">
+          <div className="admin-form-group">
+            <label>Película</label>
+            <select value={form.pelicula_id_mongo} onChange={e => setForm({ ...form, pelicula_id_mongo: e.target.value })}>
+              <option value="">Seleccionar película</option>
+              {peliculas.map(p => (
+                <option key={p.id} value={p.id}>{p.nombre}</option>
+              ))}
+            </select>
+          </div>
+          <div className="admin-form-group">
+            <label>Sala</label>
+            <select value={form.id_sala} onChange={e => setForm({ ...form, id_sala: e.target.value })}>
+              <option value="">Seleccionar sala</option>
+              {salas.map(s => (
+                <option key={s.id_sala} value={s.id_sala}>{s.nombre} ({s.capacidad} asientos)</option>
+              ))}
+            </select>
+          </div>
+          <div className="admin-form-row">
+            <div className="admin-form-group">
+              <label>Fecha</label>
+              <input type="date" value={form.fecha} onChange={e => setForm({ ...form, fecha: e.target.value })} />
+            </div>
+            <div className="admin-form-group">
+              <label>Hora</label>
+              <input type="time" value={form.hora} onChange={e => setForm({ ...form, hora: e.target.value })} />
+            </div>
+          </div>
+          <div className="admin-form-group">
+            <label>Precio Boleto ($)</label>
+            <input type="number" step="0.01" min="0" value={form.precio} onChange={e => setForm({ ...form, precio: e.target.value })} placeholder="Ej: 5.50" />
+          </div>
+          <div className="admin-form-footer">
+            <button className="summary-btn summary-btn-secondary" onClick={() => setShow(false)}>Cancelar</button>
+            <button className="admin-submit" onClick={handleSave}>{editing ? 'Actualizar' : 'Crear'}</button>
+          </div>
+        </div>
+      </Modal>
+
+      <ConfirmDialog isOpen={!!deleteId} message="¿Eliminar esta función?" onConfirm={() => { eliminarFuncion(deleteId); setDeleteId(null); }} onCancel={() => setDeleteId(null)} confirmText="Eliminar" danger />
     </>
   );
 }

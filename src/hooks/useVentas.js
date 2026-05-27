@@ -48,7 +48,7 @@ export function useVentas() {
   useEffect(() => {
     let ignore = false;
     ventasService.getVentas()
-      .then(res => { if (ignore) return; const data = Array.isArray(res.data) ? res.data : []; const normalized = data.map(normalize); setVentas(normalized); saveCache(normalized); setError(null); })
+      .then(res => { if (ignore) return; const data = Array.isArray(res.data) ? res.data : []; const cached = loadCache(); const normalized = data.map(v => { const n = normalize(v); const old = cached.find(c => c.id_venta === n.id_venta); if (old?.tipo) n.tipo = old.tipo; return n; }); setVentas(normalized); saveCache(normalized); setError(null); })
       .catch(() => { if (ignore) return; const c = loadCache(); if (c.length) setVentas(c); setError('Error al conectar. Usando datos locales.'); })
       .finally(() => { if (!ignore) setLoading(false); });
     return () => { ignore = true; };
@@ -59,7 +59,8 @@ export function useVentas() {
     try {
       const res = await ventasService.getVentas();
       const data = Array.isArray(res.data) ? res.data : [];
-      const normalized = data.map(normalize);
+      const cached = loadCache();
+      const normalized = data.map(v => { const n = normalize(v); const old = cached.find(c => c.id_venta === n.id_venta); if (old?.tipo) n.tipo = old.tipo; return n; });
       setVentas(normalized); saveCache(normalized);
     } catch {
       const c = loadCache();
@@ -72,7 +73,7 @@ export function useVentas() {
     const nueva = { ...venta, fecha: venta.fecha || new Date().toISOString() };
     try {
       const res = await ventasService.createVenta(toBackend(nueva));
-      const registrada = normalize(res.data);
+      const registrada = { ...normalize(res.data), tipo: venta.tipo };
       setVentas(prev => { const u = [...prev, registrada]; saveCache(u); return u; });
       return registrada;
     } catch {
