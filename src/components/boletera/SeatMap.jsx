@@ -1,4 +1,18 @@
-export default function SeatMap({ selectedSeats, toggleSeat, occupiedSeats, sala, asientos = [], filas = [], asientosPorFila = 0 }) {
+import { useMemo } from 'react';
+
+export default function SeatMap({ selectedSeats, toggleSeat, occupiedSeats, sala, asientos = [] }) {
+  const asientosPorFila = useMemo(() => {
+    const map = {};
+    asientos.forEach(a => {
+      const key = a.fila;
+      if (!map[key]) map[key] = [];
+      map[key].push(a);
+    });
+    return map;
+  }, [asientos]);
+
+  const filas = useMemo(() => Object.keys(asientosPorFila).sort(), [asientosPorFila]);
+
   if (asientos.length === 0) {
     return (
       <div className="seat-map-container">
@@ -19,13 +33,11 @@ export default function SeatMap({ selectedSeats, toggleSeat, occupiedSeats, sala
           <div key={fila} className="seat-row">
             <span className="seat-row-label">{fila}</span>
             <div className="seat-row-seats">
-              {Array.from({ length: asientosPorFila }, (_, i) => {
-                const num = i + 1;
-                const seatId = `${fila}${num}`;
+              {(asientosPorFila[fila] || []).map(a => {
+                const seatId = `${a.fila}${a.numero}`;
                 const isOcupado = occupiedSeats.has(seatId);
                 const isSelected = selectedSeats.includes(seatId);
-                const asientoData = asientos.find(a => a.fila === fila && a.numero === num);
-                const isSillaRuedas = asientoData?.tipo === 'silla_ruedas';
+                const isSillaRuedas = a.tipo === 'silla_ruedas';
 
                 let clase = 'seat';
                 if (isOcupado) clase += ' seat-occupied';
@@ -41,7 +53,7 @@ export default function SeatMap({ selectedSeats, toggleSeat, occupiedSeats, sala
                     disabled={isOcupado}
                     title={`${seatId}${isSillaRuedas ? ' (Silla de ruedas)' : ''}`}
                   >
-                    {isSillaRuedas ? '♿' : num}
+                    {isSillaRuedas ? '♿' : a.numero}
                   </button>
                 );
               })}

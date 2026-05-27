@@ -62,8 +62,22 @@ export default function Boletera() {
 
   const asientosSalaActual = useMemo(() => {
     if (!selectedFuncion) return [];
-    return asientos.filter(a => a.id_sala === selectedFuncion.id_sala);
-  }, [asientos, selectedFuncion]);
+    const real = asientos.filter(a => a.id_sala === selectedFuncion.id_sala);
+    if (real.length > 0) return real;
+    const sala = selectedSala || salas.find(s => s.id_sala === selectedFuncion.id_sala);
+    if (!sala?.capacidad) return [];
+    const virtual = [];
+    const cols = Math.min(10, Math.max(5, Math.ceil(Math.sqrt(sala.capacidad))));
+    const rows = Math.ceil(sala.capacidad / cols);
+    for (let r = 0; r < rows; r++) {
+      const fila = String.fromCharCode(65 + r);
+      const asientosEnFila = Math.min(cols, sala.capacidad - r * cols);
+      for (let c = 0; c < asientosEnFila; c++) {
+        virtual.push({ fila, numero: c + 1 });
+      }
+    }
+    return virtual;
+  }, [asientos, selectedFuncion, selectedSala, salas]);
 
   return (
     <div className="boletera">
@@ -139,8 +153,6 @@ export default function Boletera() {
               occupiedSeats={new Set(boleto.asientosOcupados)}
               asientos={asientosSalaActual}
               sala={selectedSala?.nombre || `Sala ${selectedFuncion.id_sala}`}
-              filas={Array.from(new Set(asientosSalaActual.map(a => a.fila))).sort()}
-              asientosPorFila={Math.max(...asientosSalaActual.map(a => a.numero), 0)}
             />
           </>
         ) : (
