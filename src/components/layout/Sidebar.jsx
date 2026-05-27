@@ -4,10 +4,10 @@ import { useAuth } from '../../context/AuthContext.jsx';
 import '../../styles/sidebar.css';
 
 const allNavItems = [
-  { to: '/dulceria', icon: HiOutlineShoppingBag, label: 'Dulcería' },
-  { to: '/boletera', icon: HiOutlineTicket, label: 'Boletera' },
+  { to: '/dulceria', icon: HiOutlineShoppingBag, label: 'Dulcería', roles: ['Administrador', 'Cajero'] },
+  { to: '/boletera', icon: HiOutlineTicket, label: 'Boletera', roles: ['Administrador', 'Cajero'] },
   { to: '/inventario', icon: HiOutlineArchive, label: 'Inventario', roles: ['Administrador', 'Almacenista'] },
-  { to: '/reportes', icon: HiOutlineChartBar, label: 'Reportes' },
+  { to: '/reportes', icon: HiOutlineChartBar, label: 'Reportes', roles: ['Administrador', 'Cajero'] },
   { to: '/admin', icon: HiOutlineCog, label: 'Admin', roles: ['Administrador'] },
   { to: '/cuenta', icon: HiOutlineUser, label: 'Cuenta' },
 ];

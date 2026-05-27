@@ -11,7 +11,10 @@ export default function Login() {
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
-  if (user) return <Navigate to="/dulceria" replace />;
+  if (user) {
+    const home = user.rol === 'Almacenista' ? '/inventario' : '/dulceria';
+    return <Navigate to={home} replace />;
+  }
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -22,8 +25,9 @@ export default function Login() {
     setError('');
     setSubmitting(true);
     try {
-      await login(usuario, password);
-      navigate('/dulceria', { replace: true });
+      const userData = await login(usuario, password);
+      const home = userData.rol === 'Almacenista' ? '/inventario' : '/dulceria';
+      navigate(home, { replace: true });
     } catch (err) {
       setError(err.response?.data?.error || err.response?.data?.message || 'Credenciales inválidas');
     } finally {

@@ -19,18 +19,20 @@ export default function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route element={<MainLayout />}>
-            <Route element={<ProtectedRoute />}>
-              <Route path="/" element={<Navigate to="/dulceria" replace />} />
+            <Route path="/" element={<Navigate to="/dulceria" replace />} />
+            <Route element={<ProtectedRoute allowedRoles={['Administrador', 'Cajero']} />}>
               <Route path="/dulceria" element={<Dulceria />} />
               <Route path="/boletera" element={<Boletera />} />
               <Route path="/reportes" element={<ReporteCierre />} />
-              <Route path="/cuenta" element={<Cuenta />} />
             </Route>
             <Route element={<ProtectedRoute allowedRoles={['Administrador', 'Almacenista']} />}>
               <Route path="/inventario" element={<Inventario />} />
             </Route>
             <Route element={<ProtectedRoute allowedRoles={['Administrador']} />}>
               <Route path="/admin" element={<Admin />} />
+            </Route>
+            <Route element={<ProtectedRoute allowedRoles={['Administrador', 'Cajero', 'Almacenista']} />}>
+              <Route path="/cuenta" element={<Cuenta />} />
             </Route>
           </Route>
         </Routes>
