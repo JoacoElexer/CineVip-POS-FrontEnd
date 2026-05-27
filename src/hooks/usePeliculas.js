@@ -4,7 +4,7 @@ import * as peliculasService from '../services/peliculas.js';
 const CACHE_KEY = 'pos_cine_peliculas_cache';
 
 function normalize(p) {
-  return { ...p, id: p._id || p.id, nombre: p.titulo || p.nombre };
+  return { ...p, id: p._id || p.id, nombre: p.titulo || p.nombre, genero: p.genero || (Array.isArray(p.generos) ? p.generos[0] : '') };
 }
 
 function toBackend(p) {
@@ -12,6 +12,8 @@ function toBackend(p) {
   delete data.id;
   data.titulo = data.nombre;
   delete data.nombre;
+  data.generos = data.genero ? [data.genero] : [];
+  delete data.genero;
   return data;
 }
 

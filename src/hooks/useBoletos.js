@@ -27,8 +27,8 @@ export function useBoletos() {
   }, []);
 
   const total = useMemo(() =>
-    selectedSeats.length * 5.50,
-    [selectedSeats.length]
+    selectedSeats.length * (funcionActual?.precio || 5.50),
+    [selectedSeats.length, funcionActual?.precio]
   );
 
   return {

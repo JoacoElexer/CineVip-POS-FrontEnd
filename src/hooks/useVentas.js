@@ -31,11 +31,6 @@ function toBackend(v) {
   data.subtotal = data.subtotal ?? data.total;
   delete data.id_usuario;
   delete data.total;
-  delete data.items;
-  delete data.asientos;
-  delete data.tipo;
-  delete data.pelicula;
-  delete data.id_funcion;
   delete data.propina_porcentaje;
   return data;
 }

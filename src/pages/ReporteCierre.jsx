@@ -1,6 +1,7 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { HiOutlineCurrencyDollar, HiOutlineCash, HiOutlineCreditCard, HiOutlineReceiptTax, HiOutlineTrash, HiOutlineRefresh } from 'react-icons/hi';
 import { useVentas } from '../hooks/useVentas.js';
+import * as reportesService from '../services/reportes.js';
 import ConfirmDialog from '../components/common/ConfirmDialog.jsx';
 import EmptyState from '../components/common/EmptyState.jsx';
 import '../styles/reporte.css';
@@ -18,19 +19,36 @@ export default function ReporteCierre() {
   const totalEfectivo = useMemo(() => ventasDelDia.reduce((sum, v) => sum + (v.metodo_pago === 'Efectivo' ? v.total : 0), 0), [ventasDelDia]);
   const totalTarjeta = useMemo(() => ventasDelDia.reduce((sum, v) => sum + (v.metodo_pago !== 'Efectivo' ? v.total : 0), 0), [ventasDelDia]);
 
-  const guardarReporte = () => {
+  useEffect(() => {
+    let ignore = false;
+    reportesService.getReportesGuardados()
+      .then(res => { if (ignore) return; const data = Array.isArray(res.data) ? res.data : []; setReportesGuardados(data.map(r => ({ ...r, id: r._id || r.id }))); })
+      .catch(() => {});
+    return () => { ignore = true; };
+  }, []);
+
+  const guardarReporte = async () => {
     const reporte = {
-      id: Date.now(),
       fecha: selectedDate,
       total: totalVentas,
       transacciones: totalTransacciones,
       efectivo: totalEfectivo,
       tarjeta: totalTarjeta,
     };
-    setReportesGuardados(prev => [...prev, reporte]);
+    try {
+      const res = await reportesService.saveReporte(reporte);
+      const saved = { ...res.data, id: res.data._id || res.data.id };
+      setReportesGuardados(prev => [...prev, saved]);
+    } catch {
+      const local = { ...reporte, id: 'temp_' + Date.now() };
+      setReportesGuardados(prev => [...prev, local]);
+    }
   };
 
-  const eliminarReporte = () => {
+  const eliminarReporte = async () => {
+    try {
+      await reportesService.deleteReporte(deleteId);
+    } catch { /* silent */ }
     setReportesGuardados(prev => prev.filter(r => r.id !== deleteId));
     setDeleteId(null);
   };
@@ -114,7 +132,7 @@ export default function ReporteCierre() {
                     <td>{v.tipo === 'dulceria' ? 'Dulcería' : 'Boleto'}</td>
                     <td>{v.tipo === 'dulceria' ? `${v.items?.length || 0} producto(s)` : `${v.asientos?.length || 0} boleto(s)`}</td>
                     <td className="reporte-monto">${(v.total || 0).toFixed(2)}</td>
-                    <td><span className="reporte-metodo reporte-metodo-{v.metodo_pago?.toLowerCase() || 'efectivo'}">{v.metodo_pago || 'Efectivo'}</span></td>
+                    <td><span className={`reporte-metodo reporte-metodo-${v.metodo_pago?.toLowerCase() || 'efectivo'}`}>{v.metodo_pago || 'Efectivo'}</span></td>
                   </tr>
                 ))}
               </tbody>

@@ -14,7 +14,7 @@ export default function Boletera() {
   const { salas } = useSalas();
   const { peliculas } = usePeliculas();
   const { funciones } = useFunciones();
-  const { asientos } = useAsientos();
+  const { asientos, fetchPorSala } = useAsientos();
   const { registrarVenta } = useVentas();
   const boleto = useBoletos();
 
@@ -33,11 +33,11 @@ export default function Boletera() {
     return filtradas;
   }, [funciones, selectedPelicula, selectedSala, selectedFecha]);
 
-  const handleSelectFuncion = (funcion) => {
+  const handleSelectFuncion = async (funcion) => {
     setSelectedFuncion(funcion);
     const pelicula = peliculas.find(p => p.id === funcion.pelicula_id);
     const sala = salas.find(s => s.id_sala === funcion.id_sala);
-    const asientosSala = asientos.filter(a => a.id_sala === funcion.id_sala);
+    const asientosSala = await fetchPorSala(funcion.id_sala);
     const ocupados = asientosSala.filter(a => a.ocupado).map(a => `${a.fila}${a.numero}`);
     boleto.seleccionarFuncion(funcion, pelicula, sala, ocupados);
   };
@@ -78,7 +78,7 @@ export default function Boletera() {
           <div className="selector-group">
             <label>Película</label>
             <select value={selectedPelicula?.id || ''} onChange={e => {
-              const pel = peliculas.find(p => p.id === Number(e.target.value));
+              const pel = peliculas.find(p => p.id === e.target.value);
               setSelectedPelicula(pel || null);
               setSelectedFuncion(null);
               boleto.clearSeats();
