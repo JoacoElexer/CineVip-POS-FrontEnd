@@ -18,7 +18,7 @@ function normalizeFuncion(f) {
       const h = f.horario || (f.fecha && f.hora ? `${f.fecha}T${f.hora}`.trim() : '');
       if (!h) return '';
       const d = new Date(h);
-      return isNaN(d.getTime()) ? h : d.toLocaleString('es-MX');
+      return isNaN(d.getTime()) ? h : d.toLocaleString('es-MX', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false });
     })(),
   };
 }
