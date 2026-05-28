@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useProductos } from '../hooks/useProductos.js';
 import { useCategorias } from '../hooks/useCategorias.js';
 import { useVentas } from '../hooks/useVentas.js';
@@ -15,6 +15,8 @@ export default function Dulceria() {
   const [isSummaryOpen, setIsSummaryOpen] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [saleDone, setSaleDone] = useState(false);
+  const [stockAlert, setStockAlert] = useState('');
+  const stockTimer = useRef(null);
 
   const { productos } = useProductos();
   const { categorias } = useCategorias();
@@ -27,8 +29,14 @@ export default function Dulceria() {
     : [];
 
   const handleAdd = (producto) => {
-    cart.addItem(producto);
-    if (!isSummaryOpen) setIsSummaryOpen(true);
+    const result = cart.addItem(producto);
+    if (!result.success) {
+      if (stockTimer.current) clearTimeout(stockTimer.current);
+      setStockAlert(result.reason || 'No disponible');
+      stockTimer.current = setTimeout(() => setStockAlert(''), 3000);
+    } else {
+      if (!isSummaryOpen) setIsSummaryOpen(true);
+    }
   };
 
   const handleFinishSale = () => {
@@ -78,6 +86,10 @@ export default function Dulceria() {
           </div>
         )}
       </div>
+
+      {stockAlert && (
+        <div className="stock-alert">{stockAlert}</div>
+      )}
 
       {saleDone && (
         <div className="sale-toast">

@@ -5,17 +5,24 @@ export function useCart() {
   const [propinaPorcentaje, setPropinaPorcentaje] = useState(10);
 
   const addItem = (producto) => {
+    const stock = producto.stock_actual ?? Infinity;
+    let added = false;
     setItems(prev => {
       const existente = prev.find(i => i.id_producto === producto.id_producto);
       if (existente) {
+        if (existente.cantidad >= stock) return prev;
+        added = true;
         return prev.map(i =>
           i.id_producto === producto.id_producto
             ? { ...i, cantidad: i.cantidad + 1 }
             : i
         );
       }
+      if (stock <= 0) return prev;
+      added = true;
       return [...prev, { ...producto, cantidad: 1 }];
     });
+    return { success: added, reason: added ? null : (stock <= 0 ? 'Sin stock' : 'Stock máximo alcanzado') };
   };
 
   const removeItem = (id) => {

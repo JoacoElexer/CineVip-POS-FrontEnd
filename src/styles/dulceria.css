@@ -109,12 +109,33 @@
   transition: background 0.2s;
 }
 
-.product-add-btn:hover {
+.product-add-btn:hover:not(:disabled) {
   background: var(--accent-hover);
+}
+
+.product-add-btn:disabled {
+  background: #ddd;
+  color: #aaa;
+  cursor: not-allowed;
 }
 
 .product-add-btn svg {
   font-size: 16px;
+}
+
+.product-stock {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+.product-stock-agotado {
+  color: #ef4444;
+}
+
+.product-stock-bajo {
+  color: #f59e0b;
 }
 
 .dulceria-fab {
@@ -406,6 +427,22 @@
 
 .tip-input:focus {
   border-color: var(--accent);
+}
+
+.stock-alert {
+  position: fixed;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #ef4444;
+  color: #fff;
+  padding: 12px 24px;
+  border-radius: var(--border-radius-sm);
+  font-weight: 600;
+  font-size: 14px;
+  z-index: 200;
+  box-shadow: var(--shadow-lg);
+  animation: toastFade 3s ease forwards;
 }
 
 .sale-toast {

@@ -1,7 +1,7 @@
 import { HiOutlineX } from 'react-icons/hi';
 import EmptyState from '../common/EmptyState.jsx';
 
-export default function CartPanel({ pelicula, sala, funcion, selectedSeats, total, onBuy }) {
+export default function CartPanel({ pelicula, sala, funcion, selectedSeats, total, onBuy, onRemoveSeat }) {
   if (!pelicula || !funcion) {
     return (
       <aside className="cart-panel">
@@ -47,7 +47,7 @@ export default function CartPanel({ pelicula, sala, funcion, selectedSeats, tota
           <>
             <div className="cart-seats-list">
               {selectedSeats.map(seat => (
-                <span key={seat} className="cart-seat-tag">
+                <span key={seat} className="cart-seat-tag" onClick={() => onRemoveSeat?.(seat, false)} style={{ cursor: 'pointer' }}>
                   {seat} <HiOutlineX />
                 </span>
               ))}

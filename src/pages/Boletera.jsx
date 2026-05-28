@@ -10,6 +10,10 @@ import Modal from '../components/common/Modal.jsx';
 import EmptyState from '../components/common/EmptyState.jsx';
 import '../styles/boletera.css';
 
+function getToday() {
+  return new Date().toISOString().split('T')[0];
+}
+
 export default function Boletera() {
   const { salas } = useSalas();
   const { peliculas } = usePeliculas();
@@ -18,20 +22,33 @@ export default function Boletera() {
   const { registrarVenta } = useVentas();
   const boleto = useBoletos();
 
-  const [selectedPelicula, setSelectedPelicula] = useState(null);
-  const [selectedSala, setSelectedSala] = useState(null);
-  const [selectedFecha, setSelectedFecha] = useState('');
+  const [selectedFecha, setSelectedFecha] = useState(getToday);
   const [selectedFuncion, setSelectedFuncion] = useState(null);
   const [showConfirm, setShowConfirm] = useState(false);
   const [saleDone, setSaleDone] = useState(false);
 
-  const funcionesFiltradas = useMemo(() => {
-    let filtradas = funciones;
-    if (selectedPelicula) filtradas = filtradas.filter(f => f.pelicula_id === selectedPelicula.id);
-    if (selectedSala) filtradas = filtradas.filter(f => f.id_sala === selectedSala.id_sala);
-    if (selectedFecha) filtradas = filtradas.filter(f => f.horario && f.horario.startsWith(selectedFecha));
-    return filtradas;
-  }, [funciones, selectedPelicula, selectedSala, selectedFecha]);
+  const hoy = getToday();
+
+  const funcionesDelDia = useMemo(() => {
+    if (!selectedFecha) return [];
+    const filtradas = funciones.filter(f => f.horario && f.horario.startsWith(selectedFecha));
+    const mapa = {};
+    for (const f of filtradas) {
+      const pid = f.pelicula_id;
+      if (!mapa[pid]) mapa[pid] = [];
+      mapa[pid].push(f);
+    }
+    const salida = [];
+    for (const pid in mapa) {
+      const peli = peliculas.find(p => p.id === pid);
+      if (peli) {
+        mapa[pid].sort((a, b) => (a.horarioDisplay || '').localeCompare(b.horarioDisplay || ''));
+        salida.push({ pelicula: peli, funciones: mapa[pid] });
+      }
+    }
+    salida.sort((a, b) => a.pelicula.nombre.localeCompare(b.pelicula.nombre));
+    return salida;
+  }, [funciones, selectedFecha, peliculas]);
 
   const handleSelectFuncion = async (funcion) => {
     setSelectedFuncion(funcion);
@@ -46,19 +63,31 @@ export default function Boletera() {
     setShowConfirm(true);
   };
 
-  const confirmBuy = () => {
-    registrarVenta({
+  const confirmBuy = async () => {
+    const res = await registrarVenta({
       tipo: 'boleto',
       id_funcion: selectedFuncion?.id_funcion,
       asientos: boleto.selectedSeats,
       total: boleto.total,
-      pelicula: selectedPelicula?.nombre
+      pelicula: selectedPelicula?.nombre,
     });
+    if (res) {
+      const nuevosAsientos = await fetchPorSala(selectedFuncion.id_sala);
+      const nuevosOcupados = nuevosAsientos.filter(a => a.ocupado).map(a => `${a.fila}${a.numero}`);
+      boleto.setAsientosOcupados(nuevosOcupados);
+    }
     boleto.clearSeats();
     setShowConfirm(false);
     setSaleDone(true);
     setTimeout(() => setSaleDone(false), 3000);
   };
+
+  const selectedPelicula = selectedFuncion
+    ? peliculas.find(p => p.id === selectedFuncion.pelicula_id)
+    : null;
+  const selectedSala = selectedFuncion
+    ? salas.find(s => s.id_sala === selectedFuncion.id_sala)
+    : null;
 
   const asientosSalaActual = useMemo(() => {
     if (!selectedFuncion) return [];
@@ -82,69 +111,58 @@ export default function Boletera() {
   return (
     <div className="boletera">
       {saleDone && (
-        <div className="sale-toast" style={{ position: 'fixed', top: '80px', left: '50%', transform: 'translateX(-50%)', background: '#2ecc71', color: '#fff', padding: '12px 24px', borderRadius: '8px', fontWeight: 600, zIndex: 200, boxShadow: '0 4px 16px rgba(0,0,0,0.2)' }}>
+        <div className="sale-toast">
           ✅ Boletos comprados exitosamente
         </div>
       )}
 
       <div className="boletera-main">
-        <div className="boletera-selectors">
-          <div className="selector-group">
-            <label>Película</label>
-            <select value={selectedPelicula?.id || ''} onChange={e => {
-              const pel = peliculas.find(p => p.id === e.target.value);
-              setSelectedPelicula(pel || null);
-              setSelectedFuncion(null);
-              boleto.clearSeats();
-            }}>
-              <option value="">Seleccionar película</option>
-              {peliculas.map(p => (
-                <option key={p.id} value={p.id}>{p.nombre}</option>
-              ))}
-            </select>
-          </div>
-
-          <div className="selector-group">
-            <label>Sala</label>
-            <select value={selectedSala?.id_sala || ''} onChange={e => {
-              const s = salas.find(sl => sl.id_sala === Number(e.target.value));
-              setSelectedSala(s || null);
-              setSelectedFuncion(null);
-              boleto.clearSeats();
-            }}>
-              <option value="">Seleccionar sala</option>
-              {salas.map(s => (
-                <option key={s.id_sala} value={s.id_sala}>Sala {s.id_sala} - {s.nombre}</option>
-              ))}
-            </select>
-          </div>
-
-          <div className="selector-group">
-            <label>Fecha</label>
-            <input type="date" value={selectedFecha} onChange={e => {
+        <div className="boletera-date-bar">
+          <label className="boletera-date-label">Fecha</label>
+          <input
+            type="date"
+            className="boletera-date-input"
+            value={selectedFecha}
+            min={hoy}
+            onChange={e => {
               setSelectedFecha(e.target.value);
               setSelectedFuncion(null);
               boleto.clearSeats();
-            }} />
-          </div>
-
-          <div className="selector-group">
-            <label>Función</label>
-            <select value={selectedFuncion?.id_funcion || ''} onChange={e => {
-              const f = funcionesFiltradas.find(fn => fn.id_funcion === Number(e.target.value));
-              if (f) handleSelectFuncion(f);
-            }}>
-              <option value="">Seleccionar función</option>
-              {funcionesFiltradas.map(f => (
-                <option key={f.id_funcion} value={f.id_funcion}>
-                  {peliculas.find(p => p.id === f.pelicula_id)?.nombre || 'N/A'} - {f.horarioDisplay || 'N/A'}
-                </option>
-              ))}
-            </select>
-          </div>
+            }}
+          />
         </div>
 
-        {selectedFuncion && selectedPelicula ? (
+        {funcionesDelDia.length > 0 ? (
+          <div className="movie-cards">
+            {funcionesDelDia.map(({ pelicula, funciones: fns }) => (
+              <div key={pelicula.id} className="movie-card">
+                <div className="movie-card-avatar">
+                  {pelicula.emoji || '🎬'}
+                </div>
+                <div className="movie-card-info">
+                  <h3 className="movie-card-title">{pelicula.nombre}</h3>
+                  <span className="movie-card-genre">{pelicula.genero || ''}</span>
+                </div>
+                <div className="movie-card-times">
+                  {fns.map(f => (
+                    <button
+                      key={f.id_funcion}
+                      className={`movie-time-btn ${selectedFuncion?.id_funcion === f.id_funcion ? 'movie-time-btn-active' : ''}`}
+                      onClick={() => handleSelectFuncion(f)}
+                    >
+                      <span className="movie-time-hora">{f.horarioDisplay}</span>
+                      <span className="movie-time-precio">${f.precio.toFixed(2)}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <EmptyState icon="🎬" message="No hay funciones para esta fecha" submessage="Selecciona otra fecha" />
+        )}
+
+        {selectedFuncion && selectedPelicula && (
           <>
             <SeatLegend />
             <SeatMap
@@ -155,8 +173,6 @@ export default function Boletera() {
               sala={selectedSala?.nombre || `Sala ${selectedFuncion.id_sala}`}
             />
           </>
-        ) : (
-          <EmptyState icon="🎬" message="Selecciona una película y función" submessage="Usa los filtros de arriba para encontrar funciones disponibles" />
         )}
       </div>
 
@@ -167,6 +183,7 @@ export default function Boletera() {
         selectedSeats={boleto.selectedSeats}
         total={boleto.total}
         onBuy={handleBuyTickets}
+        onRemoveSeat={boleto.toggleSeat}
       />
 
       <Modal isOpen={showConfirm} onClose={() => setShowConfirm(false)} title="Confirmar Compra" width="400px">
@@ -177,7 +194,7 @@ export default function Boletera() {
           </p>
           <p style={{ marginBottom: '16px', color: 'var(--text-dark)' }}>
             Asientos: {boleto.selectedSeats.join(', ')}<br />
-            Total: <strong>${boleto.total.toFixed(2)}</strong>
+            Total: <strong>${(boleto.total || 0).toFixed(2)}</strong>
           </p>
           <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
             <button className="summary-btn summary-btn-secondary" onClick={() => setShowConfirm(false)}>Cancelar</button>
