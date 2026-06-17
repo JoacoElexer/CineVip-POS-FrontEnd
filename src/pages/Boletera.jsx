@@ -8,6 +8,7 @@ import SeatMap from '../components/boletera/SeatMap.jsx';
 import CartPanel from '../components/boletera/CartPanel.jsx';
 import Modal from '../components/common/Modal.jsx';
 import EmptyState from '../components/common/EmptyState.jsx';
+import logService from '../utils/logService.js';
 import '../styles/boletera.css';
 
 function getToday() {
@@ -75,6 +76,12 @@ export default function Boletera() {
       const nuevosAsientos = await fetchPorSala(selectedFuncion.id_sala);
       const nuevosOcupados = nuevosAsientos.filter(a => a.ocupado).map(a => `${a.fila}${a.numero}`);
       boleto.setAsientosOcupados(nuevosOcupados);
+      logService.info('Boletera', 'compra_exitosa', {
+        asientos: boleto.selectedSeats,
+        total: boleto.total,
+        id_funcion: selectedFuncion?.id_funcion,
+        pelicula: selectedPelicula?.nombre,
+      });
     }
     boleto.clearSeats();
     setShowConfirm(false);

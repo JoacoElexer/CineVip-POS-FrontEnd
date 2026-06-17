@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Navigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
+import logService from '../utils/logService.js';
 import '../styles/login.css';
 
 export default function Login() {
@@ -26,9 +27,11 @@ export default function Login() {
     setSubmitting(true);
     try {
       const userData = await login(usuario, password);
+      logService.info('Login', 'inicio_sesion', { email: usuario, rol: userData.rol });
       const home = userData.rol === 'Almacenista' ? '/inventario' : '/dulceria';
       navigate(home, { replace: true });
     } catch (err) {
+      logService.warn('Login', 'login_fallido', { email: usuario, error: err.response?.data?.error || err.message });
       setError(err.response?.data?.error || err.response?.data?.message || 'Credenciales inválidas');
     } finally {
       setSubmitting(false);

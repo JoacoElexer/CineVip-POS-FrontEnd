@@ -8,6 +8,7 @@ import SaleSummaryModal from '../components/dulceria/SaleSummaryModal.jsx';
 import Modal from '../components/common/Modal.jsx';
 import EmptyState from '../components/common/EmptyState.jsx';
 import { useCart } from '../hooks/useCart.js';
+import logService from '../utils/logService.js';
 import '../styles/dulceria.css';
 
 export default function Dulceria() {
@@ -43,8 +44,8 @@ export default function Dulceria() {
     setShowConfirm(true);
   };
 
-  const confirmSale = () => {
-    registrarVenta({
+  const confirmSale = async () => {
+    const res = await registrarVenta({
       items: cart.items,
       subtotal: cart.subtotal,
       propina: cart.propina,
@@ -52,6 +53,12 @@ export default function Dulceria() {
       total: cart.total,
       tipo: 'dulceria'
     });
+    if (res) {
+      logService.info('Dulceria', 'venta_exitosa', {
+        items_count: cart.items.reduce((s, i) => s + i.cantidad, 0),
+        total: cart.total,
+      });
+    }
     cart.clearCart();
     setShowConfirm(false);
     setIsSummaryOpen(false);
