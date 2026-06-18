@@ -1,4 +1,5 @@
 import { useState, useMemo, useCallback } from 'react';
+import { calcTicketTotal } from '../utils/calculations.js';
 
 export function useBoletos() {
   const [selectedSeats, setSelectedSeats] = useState([]);
@@ -26,10 +27,7 @@ export function useBoletos() {
     setSelectedSeats([]);
   }, []);
 
-  const total = useMemo(() =>
-    selectedSeats.length * (funcionActual?.precio || 5.50),
-    [selectedSeats.length, funcionActual?.precio]
-  );
+  const total = useMemo(() => calcTicketTotal(selectedSeats.length, funcionActual?.precio), [selectedSeats.length, funcionActual?.precio]);
 
   return {
     selectedSeats, toggleSeat, clearSeats, total,

@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { calcSubtotal, calcPropina, calcTotal, calcTotalItems } from '../utils/calculations.js';
 
 export function useCart() {
   const [items, setItems] = useState([]);
@@ -41,25 +42,13 @@ export function useCart() {
     setPropinaPorcentaje(10);
   };
 
-  const subtotal = useMemo(() =>
-    items.reduce((sum, i) => sum + (i.precio || 0) * i.cantidad, 0),
-    [items]
-  );
+  const subtotal = useMemo(() => calcSubtotal(items), [items]);
 
-  const propina = useMemo(() =>
-    +(subtotal * (propinaPorcentaje / 100)).toFixed(2),
-    [subtotal, propinaPorcentaje]
-  );
+  const propina = useMemo(() => calcPropina(subtotal, propinaPorcentaje), [subtotal, propinaPorcentaje]);
 
-  const total = useMemo(() =>
-    +(subtotal + propina).toFixed(2),
-    [subtotal, propina]
-  );
+  const total = useMemo(() => calcTotal(subtotal, propina), [subtotal, propina]);
 
-  const totalItems = useMemo(() =>
-    items.reduce((sum, i) => sum + i.cantidad, 0),
-    [items]
-  );
+  const totalItems = useMemo(() => calcTotalItems(items), [items]);
 
   return {
     items, addItem, removeItem, updateQuantity, clearCart,

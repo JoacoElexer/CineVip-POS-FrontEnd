@@ -1,21 +1,8 @@
 import { useState, useCallback, useEffect } from 'react';
 import * as peliculasService from '../services/peliculas.js';
+import { normalizePelicula, toBackendPelicula } from '../utils/peliculaUtils.js';
 
 const CACHE_KEY = 'pos_cine_peliculas_cache';
-
-function normalize(p) {
-  return { ...p, id: p._id || p.id, nombre: p.titulo || p.nombre, genero: p.genero || (Array.isArray(p.generos) ? p.generos[0] : '') };
-}
-
-function toBackend(p) {
-  const data = { ...p };
-  delete data.id;
-  data.titulo = data.nombre;
-  delete data.nombre;
-  data.generos = data.genero ? [data.genero] : [];
-  delete data.genero;
-  return data;
-}
 
 function loadCache() {
   try {
@@ -36,7 +23,7 @@ export function usePeliculas() {
   useEffect(() => {
     let ignore = false;
     peliculasService.getPeliculas()
-      .then(res => { if (ignore) return; const data = Array.isArray(res.data) ? res.data : []; const normalized = data.map(normalize); setPeliculas(normalized); saveCache(normalized); setError(null); })
+      .then(res => { if (ignore) return; const data = Array.isArray(res.data) ? res.data : [];       const normalized = data.map(normalizePelicula); setPeliculas(normalized); saveCache(normalized); setError(null); })
       .catch(() => { if (ignore) return; const cached = loadCache(); if (cached.length) setPeliculas(cached); setError('Error al conectar con el servidor. Usando datos locales.'); })
       .finally(() => { if (!ignore) setLoading(false); });
     return () => { ignore = true; };
@@ -47,7 +34,7 @@ export function usePeliculas() {
     try {
       const res = await peliculasService.getPeliculas();
       const data = Array.isArray(res.data) ? res.data : [];
-      const normalized = data.map(normalize);
+      const normalized = data.map(normalizePelicula);
       setPeliculas(normalized); saveCache(normalized);
     } catch {
       const cached = loadCache();
@@ -58,8 +45,8 @@ export function usePeliculas() {
 
   const agregar = useCallback(async (pel) => {
     try {
-      const res = await peliculasService.createPelicula(toBackend(pel));
-      const nueva = normalize(res.data);
+      const res =       await peliculasService.createPelicula(toBackendPelicula(pel));
+      const nueva = normalizePelicula(res.data);
       setPeliculas(prev => { const u = [...prev, nueva]; saveCache(u); return u; });
       return nueva;
     } catch {
@@ -71,8 +58,8 @@ export function usePeliculas() {
 
   const actualizar = useCallback(async (id, data) => {
     try {
-      const res = await peliculasService.updatePelicula(id, toBackend(data));
-      const actualizada = normalize(res.data);
+      const res =       await peliculasService.updatePelicula(id, toBackendPelicula(data));
+      const actualizada = normalizePelicula(res.data);
       setPeliculas(prev => { const u = prev.map(p => p.id === id ? actualizada : p); saveCache(u); return u; });
     } catch {
       setPeliculas(prev => { const u = prev.map(p => p.id === id ? { ...p, ...data } : p); saveCache(u); return u; });

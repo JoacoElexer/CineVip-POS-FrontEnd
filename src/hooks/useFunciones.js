@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import * as funcionesService from '../services/funciones.js';
+import { formatHorarioDisplay } from '../utils/dateUtils.js';
 
 const SALA_KEY = 'pos_cine_salas_cache';
 const FUNC_KEY = 'pos_cine_funciones_cache';
@@ -14,16 +15,7 @@ function normalizeFuncion(f) {
     pelicula_id: f.pelicula_id ?? f.pelicula_id_mongo,
     pelicula_id_mongo: f.pelicula_id ?? f.pelicula_id_mongo,
     horario: f.horario || (f.fecha && f.hora ? `${f.fecha.split('T')[0]}T${f.hora}`.trim() : ''),
-    horarioDisplay: (() => {
-      if (f.hora) return f.hora.split(':').slice(0, 2).join(':');
-      if (f.horario) {
-        const d = new Date(f.horario);
-        if (isNaN(d.getTime())) return f.horario;
-        const pad = n => String(n).padStart(2, '0');
-        return `${pad(d.getHours())}:${pad(d.getMinutes())}`;
-      }
-      return '';
-    })(),
+    horarioDisplay: formatHorarioDisplay(f.hora, f.horario),
   };
 }
 

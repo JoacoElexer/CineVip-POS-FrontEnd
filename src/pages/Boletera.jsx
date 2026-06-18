@@ -9,11 +9,9 @@ import CartPanel from '../components/boletera/CartPanel.jsx';
 import Modal from '../components/common/Modal.jsx';
 import EmptyState from '../components/common/EmptyState.jsx';
 import logService from '../utils/logService.js';
+import { extractOccupiedSeatIds } from '../utils/seatUtils.js';
+import { getTodayDate } from '../utils/dateUtils.js';
 import '../styles/boletera.css';
-
-function getToday() {
-  return new Date().toISOString().split('T')[0];
-}
 
 export default function Boletera() {
   const { salas } = useSalas();
@@ -23,12 +21,12 @@ export default function Boletera() {
   const { registrarVenta } = useVentas();
   const boleto = useBoletos();
 
-  const [selectedFecha, setSelectedFecha] = useState(getToday);
+  const [selectedFecha, setSelectedFecha] = useState(getTodayDate);
   const [selectedFuncion, setSelectedFuncion] = useState(null);
   const [showConfirm, setShowConfirm] = useState(false);
   const [saleDone, setSaleDone] = useState(false);
 
-  const hoy = getToday();
+  const hoy = getTodayDate();
 
   const funcionesDelDia = useMemo(() => {
     if (!selectedFecha) return [];
@@ -56,7 +54,7 @@ export default function Boletera() {
     const pelicula = peliculas.find(p => p.id === funcion.pelicula_id);
     const sala = salas.find(s => s.id_sala === funcion.id_sala);
     const asientosSala = await fetchPorSala(funcion.id_sala);
-    const ocupados = asientosSala.filter(a => a.ocupado).map(a => `${a.fila}${a.numero}`);
+    const ocupados = extractOccupiedSeatIds(asientosSala);
     boleto.seleccionarFuncion(funcion, pelicula, sala, ocupados);
   };
 
@@ -74,7 +72,7 @@ export default function Boletera() {
     });
     if (res) {
       const nuevosAsientos = await fetchPorSala(selectedFuncion.id_sala);
-      const nuevosOcupados = nuevosAsientos.filter(a => a.ocupado).map(a => `${a.fila}${a.numero}`);
+      const nuevosOcupados = extractOccupiedSeatIds(nuevosAsientos);
       boleto.setAsientosOcupados(nuevosOcupados);
       logService.info('Boletera', 'compra_exitosa', {
         asientos: boleto.selectedSeats,
