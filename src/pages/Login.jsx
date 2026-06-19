@@ -39,7 +39,7 @@ export default function Login() {
   }
 
   return (
-    <div className="login-page">
+    <main className="login-page">
       <div className="login-card">
         <div className="login-header">
           <span className="login-logo">CV</span>
@@ -47,11 +47,12 @@ export default function Login() {
           <p>Inicia sesión para continuar</p>
         </div>
         <form onSubmit={handleSubmit} className="login-form">
-          {error && <div className="login-error">{error}</div>}
+          {error && <div className="login-error" data-testid="error-mensaje">{error}</div>}
           <div className="login-field">
             <label htmlFor="usuario">Usuario</label>
             <input
               id="usuario"
+              data-testid="input-usuario"
               type="text"
               value={usuario}
               onChange={e => setUsuario(e.target.value)}
@@ -62,19 +63,20 @@ export default function Login() {
             <label htmlFor="password">Contraseña</label>
             <input
               id="password"
+              data-testid="input-password"
               type="password"
               value={password}
               onChange={e => setPassword(e.target.value)}
             />
           </div>
-          <button type="submit" className="login-btn" disabled={submitting}>
+          <button type="submit" className="login-btn" data-testid="btn-entrar" disabled={submitting}>
             {submitting ? 'Entrando...' : 'Entrar'}
           </button>
         </form>
         <p className="login-footer">
-          ¿No tienes cuenta? <Link to="/register">Regístrate aquí</Link>
+          ¿No tienes cuenta? <Link to="/register" data-testid="link-registro">Regístrate aquí</Link>
         </p>
       </div>
-    </div>
+    </main>
   );
 }

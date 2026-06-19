@@ -58,7 +58,7 @@ html, body {
 }
 
 .login-header p {
-  color: #888;
+  color: #bbb;
   font-size: 14px;
   margin: 6px 0 0;
 }
@@ -70,9 +70,9 @@ html, body {
 }
 
 .login-error {
-  background: rgba(239,68,68,0.15);
-  border: 1px solid rgba(239,68,68,0.3);
-  color: #f87171;
+  background: rgba(239,68,68,0.2);
+  border: 1px solid rgba(239,68,68,0.4);
+  color: #fca5a5;
   padding: 10px 14px;
   border-radius: 8px;
   font-size: 13px;
@@ -150,7 +150,7 @@ html, body {
 .login-footer {
   text-align: center;
   margin-top: 24px;
-  color: #888;
+  color: #bbb;
   font-size: 13px;
 }
 

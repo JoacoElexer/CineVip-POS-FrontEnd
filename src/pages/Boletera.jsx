@@ -116,17 +116,19 @@ export default function Boletera() {
   return (
     <div className="boletera">
       {saleDone && (
-        <div className="sale-toast">
+        <div className="sale-toast" data-testid="toast-venta">
           ✅ Boletos comprados exitosamente
         </div>
       )}
 
       <div className="boletera-main">
         <div className="boletera-date-bar">
-          <label className="boletera-date-label">Fecha</label>
+          <label className="boletera-date-label" htmlFor="fecha-boletera">Fecha</label>
           <input
             type="date"
+            id="fecha-boletera"
             className="boletera-date-input"
+            data-testid="input-fecha"
             value={selectedFecha}
             min={hoy}
             onChange={e => {
@@ -141,7 +143,7 @@ export default function Boletera() {
           <div className="movie-cards">
             {funcionesDelDia.map(({ pelicula, funciones: fns }) => (
               <div key={pelicula.id} className="movie-card">
-                <div className="movie-card-avatar">
+                <div className="movie-card-avatar" role="img" aria-label={pelicula.nombre || 'Película'}>
                   {pelicula.emoji || '🎬'}
                 </div>
                 <div className="movie-card-info">
@@ -152,6 +154,7 @@ export default function Boletera() {
                   {fns.map(f => (
                     <button
                       key={f.id_funcion}
+                      data-testid={`btn-funcion-${f.id_funcion}`}
                       className={`movie-time-btn ${selectedFuncion?.id_funcion === f.id_funcion ? 'movie-time-btn-active' : ''}`}
                       onClick={() => handleSelectFuncion(f)}
                     >
@@ -202,8 +205,8 @@ export default function Boletera() {
             Total: <strong>${(boleto.total || 0).toFixed(2)}</strong>
           </p>
           <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
-            <button className="summary-btn summary-btn-secondary" onClick={() => setShowConfirm(false)}>Cancelar</button>
-            <button className="summary-btn summary-btn-primary" onClick={confirmBuy}>Confirmar Compra</button>
+            <button className="summary-btn summary-btn-secondary" data-testid="btn-cancelar-compra" onClick={() => setShowConfirm(false)}>Cancelar</button>
+            <button className="summary-btn summary-btn-primary" data-testid="btn-confirmar-compra" onClick={confirmBuy}>Confirmar Compra</button>
           </div>
         </div>
       </Modal>

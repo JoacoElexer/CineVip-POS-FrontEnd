@@ -59,44 +59,44 @@ export default function Register() {
 
           <div className="login-field">
             <label htmlFor="nombre">Nombre</label>
-            <input id="nombre" type="text" value={form.nombre} onChange={e => setForm({ ...form, nombre: e.target.value })} placeholder="Nombre completo" autoFocus />
+            <input id="nombre" data-testid="input-nombre" type="text" value={form.nombre} onChange={e => setForm({ ...form, nombre: e.target.value })} placeholder="Nombre completo" autoFocus />
           </div>
 
           <div className="login-field">
             <label htmlFor="reg-usuario">Usuario</label>
-            <input id="reg-usuario" type="text" value={form.usuario} onChange={e => setForm({ ...form, usuario: e.target.value })} placeholder="usuario" />
+            <input id="reg-usuario" data-testid="input-usuario" type="text" value={form.usuario} onChange={e => setForm({ ...form, usuario: e.target.value })} placeholder="usuario" />
           </div>
 
           <div className="login-field">
             <label htmlFor="reg-password">Contraseña</label>
-            <input id="reg-password" type="password" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} placeholder="********" />
+            <input id="reg-password" data-testid="input-password" type="password" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} placeholder="********" />
           </div>
 
           <div className="login-field">
             <label htmlFor="reg-email">Email</label>
-            <input id="reg-email" type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} placeholder="correo@cinevip.com" />
+            <input id="reg-email" data-testid="input-email" type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} placeholder="correo@cinevip.com" />
           </div>
 
           <div className="login-field">
             <label htmlFor="reg-telefono">Teléfono</label>
-            <input id="reg-telefono" type="text" value={form.telefono} onChange={e => setForm({ ...form, telefono: e.target.value })} placeholder="555-1234" />
+            <input id="reg-telefono" data-testid="input-telefono" type="text" value={form.telefono} onChange={e => setForm({ ...form, telefono: e.target.value })} placeholder="555-1234" />
           </div>
 
           <div className="login-field">
             <label htmlFor="reg-rol">Rol</label>
-            <select id="reg-rol" value={form.rol} onChange={e => setForm({ ...form, rol: e.target.value })} className="login-select">
+            <select id="reg-rol" data-testid="select-rol" value={form.rol} onChange={e => setForm({ ...form, rol: e.target.value })} className="login-select">
               <option value="Cajero">Cajero</option>
               <option value="Almacenista">Almacenista</option>
               <option value="Administrador">Administrador</option>
             </select>
           </div>
 
-          <button type="submit" className="login-btn" disabled={submitting || !!success}>
+          <button type="submit" className="login-btn" data-testid="btn-crear-cuenta" disabled={submitting || !!success}>
             {submitting ? 'Registrando...' : 'Crear Cuenta'}
           </button>
         </form>
         <p className="login-footer">
-          ¿Ya tienes cuenta? <Link to="/login">Inicia sesión</Link>
+          ¿Ya tienes cuenta? <Link to="/login" data-testid="link-login">Inicia sesión</Link>
         </p>
       </div>
     </div>

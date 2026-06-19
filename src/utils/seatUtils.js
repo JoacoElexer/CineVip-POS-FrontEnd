@@ -1,5 +1,5 @@
 export function extractOccupiedSeatIds(asientos) {
-  return asientos.filter(a => a.ocupado).map(a => `${a.fila}${a.numero}`);
+  return asientos.filter(a => a.ocupado || a.estado_actual === 'Ocupado').map(a => `${a.fila}${a.numero}`);
 }
 
 export function toggleSeatInList(seats, seatId) {

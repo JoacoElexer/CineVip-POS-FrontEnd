@@ -9,7 +9,7 @@ export default function ProductCard({ producto, onAdd }) {
   const stockBajo = stock !== undefined && stock > 0 && stock <= 5;
 
   return (
-    <div className="product-card">
+    <div className="product-card" data-testid={`producto-${producto.id_producto}`}>
       <div className="product-image" style={{ background: coloresPlaceholder[colorIndex] }}>
         <span className="product-emoji">{producto.emoji || '📦'}</span>
       </div>
@@ -19,7 +19,7 @@ export default function ProductCard({ producto, onAdd }) {
         {agotado && <span className="product-stock product-stock-agotado">Agotado</span>}
         {stockBajo && <span className="product-stock product-stock-bajo">Stock: {stock}</span>}
       </div>
-      <button className="product-add-btn" disabled={agotado} onClick={() => onAdd(producto)}>
+      <button className="product-add-btn" data-testid={`btn-agregar-${producto.id_producto}`} disabled={agotado} onClick={() => onAdd(producto)}>
         <HiOutlinePlus />
         {agotado ? 'Agotado' : 'Agregar'}
       </button>

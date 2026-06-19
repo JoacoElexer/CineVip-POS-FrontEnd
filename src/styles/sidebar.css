@@ -24,7 +24,7 @@
 }
 
 .sidebar-logo-text {
-  color: #fff;
+  color: var(--text-dark);
   font-weight: 800;
   font-size: 18px;
   letter-spacing: -0.5px;
@@ -58,7 +58,7 @@
 }
 
 .sidebar-link.active {
-  color: var(--accent);
+  color: var(--text-dark);
   background: var(--accent-light);
 }
 

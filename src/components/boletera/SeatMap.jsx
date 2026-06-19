@@ -48,10 +48,12 @@ export default function SeatMap({ selectedSeats, toggleSeat, occupiedSeats, sala
                 return (
                   <button
                     key={seatId}
+                    data-testid={`asiento-${seatId}`}
                     className={clase}
                     onClick={() => toggleSeat(seatId, isOcupado)}
                     disabled={isOcupado}
                     title={`${seatId}${isSillaRuedas ? ' (Silla de ruedas)' : ''}`}
+                    aria-label={`Asiento ${seatId}${isSillaRuedas ? ', silla de ruedas' : ''}${isOcupado ? ', ocupado' : ''}`}
                   >
                     {isSillaRuedas ? '♿' : a.numero}
                   </button>

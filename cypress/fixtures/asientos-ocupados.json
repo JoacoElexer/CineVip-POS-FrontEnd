@@ -1,0 +1,5 @@
+[
+  { "id_asiento": 999, "id_sala": 1, "sala_id": 1, "fila": "A", "numero": 1, "tipo_asiento": "Regular", "estado_actual": "Ocupado", "ocupado": true },
+  { "id_asiento": 998, "id_sala": 1, "sala_id": 1, "fila": "A", "numero": 2, "tipo_asiento": "Silla de Ruedas", "estado_actual": "Ocupado", "ocupado": true },
+  { "id_asiento": 997, "id_sala": 1, "sala_id": 1, "fila": "A", "numero": 3, "tipo_asiento": "Regular", "estado_actual": "Disponible", "ocupado": false }
+]

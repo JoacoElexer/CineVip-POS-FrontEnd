@@ -32,6 +32,7 @@ export default function Sidebar() {
           <NavLink
             key={item.to}
             to={item.to}
+            data-testid={`nav-${item.to.replace('/', '')}`}
             className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}
           >
             <item.icon className="sidebar-icon" />
@@ -40,7 +41,7 @@ export default function Sidebar() {
         ))}
       </div>
       <div className="sidebar-footer">
-        <button className="sidebar-logout" onClick={handleLogout}>
+        <button className="sidebar-logout" data-testid="btn-cerrar-sesion" onClick={handleLogout}>
           <HiOutlineLogout className="sidebar-icon" />
           <span className="sidebar-label">Salir</span>
         </button>

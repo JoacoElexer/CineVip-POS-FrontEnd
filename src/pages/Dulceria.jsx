@@ -95,17 +95,17 @@ export default function Dulceria() {
       </div>
 
       {stockAlert && (
-        <div className="stock-alert">{stockAlert}</div>
+        <div className="stock-alert" data-testid="stock-alert">{stockAlert}</div>
       )}
 
       {saleDone && (
-        <div className="sale-toast">
+        <div className="sale-toast" data-testid="toast-venta">
           ✅ Venta registrada exitosamente
         </div>
       )}
 
       {cart.totalItems > 0 && (
-        <button className="dulceria-fab" onClick={() => setIsSummaryOpen(true)}>
+        <button className="dulceria-fab" data-testid="fab-carrito" onClick={() => setIsSummaryOpen(true)}>
           <span className="fab-icon">🛒</span>
           <span className="fab-badge">{cart.totalItems}</span>
           <span className="fab-total">${cart.total.toFixed(2)}</span>
@@ -132,8 +132,8 @@ export default function Dulceria() {
             ¿Confirmas la venta por <strong>${cart.total.toFixed(2)}</strong>?
           </p>
           <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
-            <button className="summary-btn summary-btn-secondary" onClick={() => setShowConfirm(false)}>Cancelar</button>
-            <button className="summary-btn summary-btn-primary" onClick={confirmSale}>Confirmar Venta</button>
+            <button className="summary-btn summary-btn-secondary" data-testid="btn-cancelar-venta" onClick={() => setShowConfirm(false)}>Cancelar</button>
+            <button className="summary-btn summary-btn-primary" data-testid="btn-confirmar-venta" onClick={confirmSale}>Confirmar Venta</button>
           </div>
         </div>
       </Modal>

@@ -24,3 +24,7 @@ node_modules
 # Environment variables
 .env
 .coverage
+
+# Cypress
+cypress/screenshots/
+cypress/videos/

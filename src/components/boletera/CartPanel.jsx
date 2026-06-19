@@ -16,7 +16,7 @@ export default function CartPanel({ pelicula, sala, funcion, selectedSeats, tota
       <h2 className="cart-panel-title">Tu carrito</h2>
 
       <div className="cart-movie-info">
-        <div className="cart-movie-img" style={{ background: 'linear-gradient(135deg, var(--accent), #9b59b6)' }}>
+        <div className="cart-movie-img" role="img" aria-label={pelicula.nombre || 'Película'} style={{ background: 'linear-gradient(135deg, var(--accent), #9b59b6)' }}>
           {pelicula.emoji || '🎬'}
         </div>
         <div className="cart-movie-details">
@@ -48,7 +48,7 @@ export default function CartPanel({ pelicula, sala, funcion, selectedSeats, tota
             <div className="cart-seats-list">
               {selectedSeats.map(seat => (
                 <span key={seat} className="cart-seat-tag" onClick={() => onRemoveSeat?.(seat, false)} style={{ cursor: 'pointer' }}>
-                  {seat} <HiOutlineX />
+                  {seat} <HiOutlineX aria-hidden="true" />
                 </span>
               ))}
             </div>
@@ -68,6 +68,7 @@ export default function CartPanel({ pelicula, sala, funcion, selectedSeats, tota
 
       <button
         className="cart-checkout-btn"
+        data-testid="btn-comprar"
         disabled={selectedSeats.length === 0}
         onClick={onBuy}
       >

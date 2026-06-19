@@ -10,7 +10,7 @@ export default function SeatLegend() {
     <div className="seat-legend">
       {items.map(item => (
         <div key={item.label} className="seat-legend-item">
-          <span className="seat-legend-dot" style={{ background: item.color }} />
+          <span className="seat-legend-dot" style={{ background: item.color }} aria-hidden="true" />
           <span>{item.label}</span>
         </div>
       ))}

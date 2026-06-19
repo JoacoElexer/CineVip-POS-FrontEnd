@@ -29,7 +29,7 @@ export default function Admin() {
 
       <div className="admin-tabs">
         {TABS.map(t => (
-          <button key={t.id} className={`admin-tab ${activeTab === t.id ? 'active' : ''}`} onClick={() => setActiveTab(t.id)}>
+          <button key={t.id} className={`admin-tab ${activeTab === t.id ? 'active' : ''}`} data-testid={`tab-${t.id}`} onClick={() => setActiveTab(t.id)}>
             {t.label}
           </button>
         ))}
@@ -91,15 +91,15 @@ function SalasPanel() {
         <div className="admin-form">
           <div className="admin-form-group">
             <label>Nombre de la sala</label>
-            <input type="text" value={form.nombre} onChange={e => setForm({ ...form, nombre: e.target.value })} placeholder="Ej: Sala 1" />
+            <input type="text" data-testid="input-nombre-sala" value={form.nombre} onChange={e => setForm({ ...form, nombre: e.target.value })} placeholder="Ej: Sala 1" />
           </div>
           <div className="admin-form-group">
             <label>Capacidad</label>
-            <input type="number" min="1" value={form.capacidad} onChange={e => setForm({ ...form, capacidad: e.target.value })} placeholder="Ej: 100" />
+            <input type="number" data-testid="input-capacidad-sala" min="1" value={form.capacidad} onChange={e => setForm({ ...form, capacidad: e.target.value })} placeholder="Ej: 100" />
           </div>
           <div className="admin-form-footer">
-            <button className="summary-btn summary-btn-secondary" onClick={() => setShow(false)}>Cancelar</button>
-            <button className="admin-submit" onClick={handleSave}>{editing ? 'Actualizar' : 'Crear'}</button>
+            <button className="summary-btn summary-btn-secondary" data-testid="btn-cancelar" onClick={() => setShow(false)}>Cancelar</button>
+            <button className="admin-submit" data-testid="btn-guardar" onClick={handleSave}>{editing ? 'Actualizar' : 'Crear'}</button>
           </div>
         </div>
       </Modal>
@@ -132,12 +132,12 @@ function AsientosPanel() {
     <>
       <PanelHeader label="Asientos" count={filtered.length} onCreate={() => setShow(true)} />
       <div className="admin-filter-bar">
-        <select value={salaFilter} onChange={e => setSalaFilter(e.target.value)}>
+        <select data-testid="select-sala-asientos" value={salaFilter} onChange={e => setSalaFilter(e.target.value)}>
           <option value="">Todas las salas</option>
           {salas.map(s => <option key={s.id_sala} value={s.id_sala}>{s.nombre}</option>)}
         </select>
         {salaFilter && (
-          <button className="admin-delete-btn" onClick={() => eliminarPorSala(Number(salaFilter))}>Limpiar asientos</button>
+          <button className="admin-delete-btn" data-testid="btn-limpiar-asientos" onClick={() => eliminarPorSala(Number(salaFilter))}>Limpiar asientos</button>
         )}
       </div>
 
@@ -160,7 +160,7 @@ function AsientosPanel() {
         <div className="admin-form">
           <div className="admin-form-group">
             <label>Sala</label>
-            <select value={salaFilter} onChange={e => setSalaFilter(e.target.value)}>
+            <select data-testid="select-sala-generar" value={salaFilter} onChange={e => setSalaFilter(e.target.value)}>
               <option value="">Seleccionar sala</option>
               {salas.map(s => <option key={s.id_sala} value={s.id_sala}>{s.nombre}</option>)}
             </select>
@@ -168,20 +168,20 @@ function AsientosPanel() {
           <div className="admin-form-row">
             <div className="admin-form-group">
               <label>Fila</label>
-              <input type="text" maxLength="1" value={form.fila} onChange={e => setForm({ ...form, fila: e.target.value })} placeholder="A" />
+              <input type="text" data-testid="input-fila-asientos" maxLength="1" value={form.fila} onChange={e => setForm({ ...form, fila: e.target.value })} placeholder="A" />
             </div>
             <div className="admin-form-group">
               <label>Número inicial</label>
-              <input type="number" min="1" value={form.numero_inicio} onChange={e => setForm({ ...form, numero_inicio: e.target.value })} />
+              <input type="number" data-testid="input-numero-inicio" min="1" value={form.numero_inicio} onChange={e => setForm({ ...form, numero_inicio: e.target.value })} />
             </div>
             <div className="admin-form-group">
               <label>Cantidad</label>
-              <input type="number" min="1" value={form.cantidad} onChange={e => setForm({ ...form, cantidad: e.target.value })} />
+              <input type="number" data-testid="input-cantidad-asientos" min="1" value={form.cantidad} onChange={e => setForm({ ...form, cantidad: e.target.value })} />
             </div>
           </div>
           <div className="admin-form-footer">
-            <button className="summary-btn summary-btn-secondary" onClick={() => setShow(false)}>Cancelar</button>
-            <button className="admin-submit" onClick={handleGenerate}>Generar</button>
+            <button className="summary-btn summary-btn-secondary" data-testid="btn-cancelar" onClick={() => setShow(false)}>Cancelar</button>
+            <button className="admin-submit" data-testid="btn-generar-asientos" onClick={handleGenerate}>Generar</button>
           </div>
         </div>
       </Modal>
@@ -233,8 +233,8 @@ function MetodosPagoPanel() {
             <input type="text" value={form.tipo} onChange={e => setForm({ ...form, tipo: e.target.value })} placeholder="Ej: Efectivo" />
           </div>
           <div className="admin-form-footer">
-            <button className="summary-btn summary-btn-secondary" onClick={() => setShow(false)}>Cancelar</button>
-            <button className="admin-submit" onClick={handleSave}>{editing ? 'Actualizar' : 'Crear'}</button>
+            <button className="summary-btn summary-btn-secondary" data-testid="btn-cancelar" onClick={() => setShow(false)}>Cancelar</button>
+            <button className="admin-submit" data-testid="btn-guardar" onClick={handleSave}>{editing ? 'Actualizar' : 'Crear'}</button>
           </div>
         </div>
       </Modal>
@@ -301,8 +301,8 @@ function PromocionesPanel() {
             </label>
           </div>
           <div className="admin-form-footer">
-            <button className="summary-btn summary-btn-secondary" onClick={() => setShow(false)}>Cancelar</button>
-            <button className="admin-submit" onClick={handleSave}>{editing ? 'Actualizar' : 'Crear'}</button>
+            <button className="summary-btn summary-btn-secondary" data-testid="btn-cancelar" onClick={() => setShow(false)}>Cancelar</button>
+            <button className="admin-submit" data-testid="btn-guardar" onClick={handleSave}>{editing ? 'Actualizar' : 'Crear'}</button>
           </div>
         </div>
       </Modal>
@@ -451,8 +451,8 @@ function PeliculasPanel() {
             </div>
           </div>
           <div className="admin-form-footer">
-            <button className="summary-btn summary-btn-secondary" onClick={() => setShow(false)}>Cancelar</button>
-            <button className="admin-submit" onClick={handleSave}>{editing ? 'Actualizar' : 'Crear'}</button>
+            <button className="summary-btn summary-btn-secondary" data-testid="btn-cancelar" onClick={() => setShow(false)}>Cancelar</button>
+            <button className="admin-submit" data-testid="btn-guardar" onClick={handleSave}>{editing ? 'Actualizar' : 'Crear'}</button>
           </div>
         </div>
       </Modal>
@@ -561,8 +561,8 @@ function FuncionesPanel() {
             <input type="number" step="0.01" min="0" value={form.precio} onChange={e => setForm({ ...form, precio: e.target.value })} placeholder="Ej: 5.50" />
           </div>
           <div className="admin-form-footer">
-            <button className="summary-btn summary-btn-secondary" onClick={() => setShow(false)}>Cancelar</button>
-            <button className="admin-submit" onClick={handleSave}>{editing ? 'Actualizar' : 'Crear'}</button>
+            <button className="summary-btn summary-btn-secondary" data-testid="btn-cancelar" onClick={() => setShow(false)}>Cancelar</button>
+            <button className="admin-submit" data-testid="btn-guardar" onClick={handleSave}>{editing ? 'Actualizar' : 'Crear'}</button>
           </div>
         </div>
       </Modal>
@@ -667,8 +667,8 @@ function UsuariosPanel() {
             </label>
           </div>
           <div className="admin-form-footer">
-            <button className="summary-btn summary-btn-secondary" onClick={() => setShow(false)}>Cancelar</button>
-            <button className="admin-submit" onClick={handleSave}>{editing ? 'Actualizar' : 'Crear'}</button>
+            <button className="summary-btn summary-btn-secondary" data-testid="btn-cancelar" onClick={() => setShow(false)}>Cancelar</button>
+            <button className="admin-submit" data-testid="btn-guardar" onClick={handleSave}>{editing ? 'Actualizar' : 'Crear'}</button>
           </div>
         </div>
       </Modal>
@@ -682,7 +682,7 @@ function PanelHeader({ label, count, onCreate }) {
   return (
     <div className="admin-panel-header">
       <span className="admin-panel-count">{count} registro(s)</span>
-      <button className="inv-add-btn" onClick={onCreate}><HiOutlinePlus /> Agregar {label}</button>
+      <button className="inv-add-btn" data-testid={`btn-agregar-${label.toLowerCase()}`} onClick={onCreate}><HiOutlinePlus /> Agregar {label}</button>
     </div>
   );
 }
